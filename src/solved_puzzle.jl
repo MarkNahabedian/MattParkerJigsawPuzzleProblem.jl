@@ -32,12 +32,19 @@ directions.
 =#
 
 """
-    do_cardinal_directions(f)
+    do_cardinal_directions(f; randomize=false)
 
 Applies the function `f` to each of the four cardinal directions.
+
+If `randomize` is true then the directions are considered in random
+order.
 """
-function do_cardinal_directions(f)
-    for dt in subtypes(CardinalDirection)
+function do_cardinal_directions(f; randomize=false)
+    directions = subtypes(CardinalDirection)
+    if randomize
+        directions = Random.shuffle(directions)
+    end
+    for dt in directions
         f(dt())
     end
 end
@@ -132,6 +139,26 @@ neighbor_coordinates(spp::SolvedPuzzlePiece, ::S) = [spp.row + 1, spp.col]
 neighbor_coordinates(spp::SolvedPuzzlePiece, ::W) = [spp.row, spp.col - 1]
 
 
+#=
+We randomize the order of the EdgeTypes so they don't hint at
+the solution.
+=#
+
+"""
+    random_edge_types(count, is_perimeter)
+
+Create the specified number of unique [`EdgeType`](@ref)s 
+and returns them in a random order.
+"""
+function random_edge_types(count, is_perimeter)
+    edge_types = []
+    for _ in 1:count
+        push!(edge_types, EdgeType(is_perimeter))
+    end
+    shuffle(edge_types)
+end
+
+
 """
     assign_perimeter_edges(SolvedPuzzle)::SolvedPuzzle
 
@@ -142,15 +169,18 @@ The `SolvedPuzzle` is returned.
 """
 function assign_perimeter_edges(sp::SolvedPuzzle)::SolvedPuzzle
     (rows, cols) = size(sp)
+    ## We randomize the order of the EdgeTypes so they don't hint at
+    ## the solution.
+    edge_types = random_edge_types(2 * rows + 2 * cols, true)
     for r in 1:rows
         ## Top and bottom edges:
-        sp.grid[r, 1].edges[W()] = Edge(EdgeType(true), Ball())
-        sp.grid[r, cols].edges[E()] = Edge(EdgeType(true), Ball())
+        sp.grid[r, 1].edges[W()] = Edge(pop!(edge_types), Ball())
+        sp.grid[r, cols].edges[E()] = Edge(pop!(edge_types), Ball())
     end
     for c in 1:cols
         ## Left and right edges:
-        sp.grid[1, c].edges[N()] = Edge(EdgeType(true), Ball())
-        sp.grid[rows, c].edges[S()] = Edge(EdgeType(true), Ball())
+        sp.grid[1, c].edges[N()] = Edge(pop!(edge_types), Ball())
+        sp.grid[rows, c].edges[S()] = Edge(pop!(edge_types), Ball())
     end
     sp
 end
@@ -166,13 +196,15 @@ The `SolvedPuzzle` is returned.
 """
 function assign_unique_unassigned_edges(sp::SolvedPuzzle)::SolvedPuzzle
     (rows, cols) = size(sp)
+    # It's ok to create too many EdgeTypes, they're cheap:
+    edge_types = random_edge_types(4 * rows * cols / 2, false)
     for r in 1:rows
         for c in 1:cols
-            do_cardinal_directions() do direction
+            do_cardinal_directions(; randomize=true) do direction
                 piece = sp[r, c]
                 if !haskey(piece.edges, direction)
                     ## Edge not yet assigned
-                    new_edge_type = EdgeType(false)
+                    new_edge_type = pop!(edge_types)
                     neignbor =
                         sp[neighbor_coordinates(piece, direction)...]
                     ## Maybe we should randomize which BallOrSocket to
