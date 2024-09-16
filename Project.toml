@@ -3,6 +3,11 @@ uuid = "0b6cfa58-065e-4a28-bd8c-ef93a167ff61"
 authors = ["MarkNahabedian <naha@mit.edu> and contributors"]
 version = "1.0.0-DEV"
 
+[deps]
+InteractiveUtils = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
+Literate = "98b081ad-f1c9-55d3-8b20-4c87d4299306"
+Markdown = "d6f4376e-aef5-505a-96c1-9c027394607a"
+
 [compat]
 julia = "1"
 
