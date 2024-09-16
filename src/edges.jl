@@ -1,7 +1,7 @@
 export ALL_EDGE_TYPES, EdgeType, BallOrSocket, Ball, Socket
 export opposite, Edge, edges_match
 
-md"""
+#=
 
 We define some number of "edge types".  If the puzzle pieces are all
 square, then there is only one edge type.  If they are rectangular then
@@ -20,8 +20,14 @@ EdgeType represents a perimeter edge though, so we track that.
 
 We accumulate a catalog of every EdgeType in `ALL_EDGE_TYPES`.
 
-"""
+=#
 
+"""
+    ALL_EDGE_TYPES
+
+`ALL_EDGE_TYPES` is a vector of all of the `EdgeType`s that have been
+created.
+"""
 ALL_EDGE_TYPES = []
 
 let
@@ -44,8 +50,17 @@ let
     end
 end
 
+@doc """
+    EdgeType(isperimeter::Bool)
 
-md"""
+Creates a unique `EdgeType`.
+
+`isperimeter` indicates if the EdgeType is for an edge on the
+perimeter of the puzzle.
+""" EdgeType
+
+
+#=
 
 At the edge where two puzzle pieces interlock, the edges of those
 pieces are mirror images of each other.  At that meeting edge, one
@@ -58,7 +73,7 @@ whether it is a ball or socket.
 
 We arbitrarily decide that a perimeter edge is always a *ball*.
 
-"""
+=#
 
 abstract type BallOrSocket end
 struct Ball <: BallOrSocket end
@@ -68,13 +83,20 @@ opposite(::Ball) = Socket()
 opposite(::Socket) = Ball()
 
 
+"""
+    Edge(::EdgeType, ::BallOrSocket)
+
+`Edge` represents one edge of a puzzle piece.  It has an `edge_type`.
+The `bs` field indicates whether the edge is a *ball* or *socket*.
+
+"""
 struct Edge
     edge_type::EdgeType
     bs::BallOrSocket
 end
 
 
-md"""
+#=
 
 It is easier to index things if there is a total ordering defined for
 them.
@@ -83,7 +105,7 @@ them.
 
 Wearbitrarily decide that `Ball` comes before `Socket`.
 
-"""
+=#
 
 function Base.isless(a::EdgeType, b::EdgeType)::Bool
     a.uid < b.uid
@@ -98,13 +120,19 @@ function Base.isless(::Ball, ::Socket)
 end
 
 
-md"""
+#=
 
 Two `Edge`s match if they have the same `EdgeType` and their `bs`s are
 opposites.
 
-"""
+=#
 
+"""
+    edges_match(::Edge, ::Edge)::Bool
+
+Two `Edge`s match if they have the same `EdgeType` and their `bs`s are
+opposites.
+"""
 function edges_match(e1::Edge, e2::Edge)::Bool
     (e1.edge_type == e2.edge_type) &&
         (opposite(e1.bs) == e2.bs)

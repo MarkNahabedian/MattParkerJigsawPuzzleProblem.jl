@@ -1,7 +1,30 @@
 using MattParkerJigsawPuzzleProblem
 using Documenter
+using Markdown
+using Literate
 
-DocMeta.setdocmeta!(MattParkerJigsawPuzzleProblem, :DocTestSetup, :(using MattParkerJigsawPuzzleProblem); recursive=true)
+DocMeta.setdocmeta!(MattParkerJigsawPuzzleProblem, :DocTestSetup,
+                    :(using MattParkerJigsawPuzzleProblem);
+                    recursive=true)
+
+let
+    (REPO_ROOT, _) = splitdir(@__DIR__)
+    for (root, _, files) in walkdir(normpath(joinpath(@__DIR__,
+                                                      "..", "src")))
+        for file in files
+            (name, ext) = splitext(file)
+            if ext == ".jl"
+                abs = normpath(joinpath(root, file))
+                outdir = joinpath(@__DIR__, relpath(root, REPO_ROOT))
+                Literate.markdown(
+                    abs, outdir;
+                    execute = false,
+                    codefence = "```julia" => "```")
+            end
+        end
+    end
+end
+
 
 makedocs(;
     modules=[MattParkerJigsawPuzzleProblem],
@@ -14,6 +37,8 @@ makedocs(;
     ),
     pages=[
         "Home" => "index.md",
+        "Edges" => "edges.md",
+        "SolvedPuzzle" => "solved_puzzle.md"
     ],
 )
 
