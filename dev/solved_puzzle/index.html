@@ -7,12 +7,19 @@ struct N &lt;: CardinalDirection end
 struct E &lt;: CardinalDirection end
 struct S &lt;: CardinalDirection end
 struct W &lt;: CardinalDirection end</code></pre><p><code>do_cardinal_directions</code> allows us to easily iterate over the cardinal directions.</p><pre><code class="language-julia hljs">&quot;&quot;&quot;
-    do_cardinal_directions(f)
+    do_cardinal_directions(f; randomize=false)
 
 Applies the function `f` to each of the four cardinal directions.
+
+If `randomize` is true then the directions are considered in random
+order.
 &quot;&quot;&quot;
-function do_cardinal_directions(f)
-    for dt in subtypes(CardinalDirection)
+function do_cardinal_directions(f; randomize=false)
+    directions = subtypes(CardinalDirection)
+    if randomize
+        directions = Random.shuffle(directions)
+    end
+    for dt in directions
         f(dt())
     end
 end</code></pre><p>For each cardinal compass direction, there is the opposite dirtection.</p><p>For two puzzle pieces that share a vertical edge, the piece on the left&#39;s <code>E</code> edge will have the same <code>EdgeType</code> as that of the <code>W</code> edge of the piece on the right.  The will have opposite <code>BallOrSocket</code>s.</p><pre><code class="language-julia hljs">opposite(::N) = S()
@@ -77,7 +84,19 @@ end
 neighbor_coordinates(spp::SolvedPuzzlePiece, ::N) = [spp.row - 1, spp.col]
 neighbor_coordinates(spp::SolvedPuzzlePiece, ::E) = [spp.row, spp.col + 1]
 neighbor_coordinates(spp::SolvedPuzzlePiece, ::S) = [spp.row + 1, spp.col]
-neighbor_coordinates(spp::SolvedPuzzlePiece, ::W) = [spp.row, spp.col - 1]
+neighbor_coordinates(spp::SolvedPuzzlePiece, ::W) = [spp.row, spp.col - 1]</code></pre><p>We randomize the order of the EdgeTypes so they don&#39;t hint at the solution.</p><pre><code class="language-julia hljs">&quot;&quot;&quot;
+    random_edge_types(count, is_perimeter)
+
+Create the specified number of unique [`EdgeType`](@ref)s
+and returns them in a random order.
+&quot;&quot;&quot;
+function random_edge_types(count, is_perimeter)
+    edge_types = []
+    for _ in 1:count
+        push!(edge_types, EdgeType(is_perimeter))
+    end
+    shuffle(edge_types)
+end
 
 
 &quot;&quot;&quot;
@@ -90,15 +109,18 @@ The `SolvedPuzzle` is returned.
 &quot;&quot;&quot;
 function assign_perimeter_edges(sp::SolvedPuzzle)::SolvedPuzzle
     (rows, cols) = size(sp)
+    # We randomize the order of the EdgeTypes so they don&#39;t hint at
+    # the solution.
+    edge_types = random_edge_types(2 * rows + 2 * cols, true)
     for r in 1:rows
         # Top and bottom edges:
-        sp.grid[r, 1].edges[W()] = Edge(EdgeType(true), Ball())
-        sp.grid[r, cols].edges[E()] = Edge(EdgeType(true), Ball())
+        sp.grid[r, 1].edges[W()] = Edge(pop!(edge_types), Ball())
+        sp.grid[r, cols].edges[E()] = Edge(pop!(edge_types), Ball())
     end
     for c in 1:cols
         # Left and right edges:
-        sp.grid[1, c].edges[N()] = Edge(EdgeType(true), Ball())
-        sp.grid[rows, c].edges[S()] = Edge(EdgeType(true), Ball())
+        sp.grid[1, c].edges[N()] = Edge(pop!(edge_types), Ball())
+        sp.grid[rows, c].edges[S()] = Edge(pop!(edge_types), Ball())
     end
     sp
 end
@@ -113,14 +135,14 @@ puzzle.
 The `SolvedPuzzle` is returned.
 &quot;&quot;&quot;
 function assign_unique_unassigned_edges(sp::SolvedPuzzle)::SolvedPuzzle
-    (rows, cols) = size(sp)
+    (rows, cols) = size(sp)</code></pre><p>It&#39;s ok to create too many EdgeTypes, they&#39;re cheap:</p><pre><code class="language-julia hljs">    edge_types = random_edge_types(4 * rows * cols / 2, false)
     for r in 1:rows
         for c in 1:cols
-            do_cardinal_directions() do direction
+            do_cardinal_directions(; randomize=true) do direction
                 piece = sp[r, c]
                 if !haskey(piece.edges, direction)
                     # Edge not yet assigned
-                    new_edge_type = EdgeType(false)
+                    new_edge_type = pop!(edge_types)
                     neignbor =
                         sp[neighbor_coordinates(piece, direction)...]
                     # Maybe we should randomize which BallOrSocket to
@@ -135,4 +157,4 @@ function assign_unique_unassigned_edges(sp::SolvedPuzzle)::SolvedPuzzle
         end
     end
     sp
-end</code></pre><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../edges/">« Edges</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.7.0 on <span class="colophon-date" title="Monday 16 September 2024 15:27">Monday 16 September 2024</span>. Using Julia version 1.10.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+end</code></pre><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../edges/">« Edges</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.7.0 on <span class="colophon-date" title="Monday 16 September 2024 16:17">Monday 16 September 2024</span>. Using Julia version 1.10.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
