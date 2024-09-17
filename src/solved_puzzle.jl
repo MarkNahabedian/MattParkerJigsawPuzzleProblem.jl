@@ -1,9 +1,5 @@
-export CardinalDirection, N, E, S, W
 export SolvedPuzzlePiece, SolvedPuzzle
-export neighbor_coordinates, do_cardinal_directions
-export opposite, next, previous
 export assign_perimeter_edges, assign_unique_unassigned_edges
-
 
 #=
 
@@ -18,64 +14,14 @@ a cardinal compass direction: `n`, `e`, `s`, or `w`.
 
 =#
 
-abstract type CardinalDirection end
-struct N <: CardinalDirection end
-struct E <: CardinalDirection end
-struct S <: CardinalDirection end
-struct W <: CardinalDirection end
-
 
 #=
-
-`do_cardinal_directions` allows us to easily iterate over the cardinal
-directions.
-
-=#
-
-"""
-    do_cardinal_directions(f; randomize=false)
-
-Applies the function `f` to each of the four cardinal directions.
-
-If `randomize` is true then the directions are considered in random
-order.
-"""
-function do_cardinal_directions(f; randomize=false)
-    directions = subtypes(CardinalDirection)
-    if randomize
-        directions = Random.shuffle(directions)
-    end
-    for dt in directions
-        f(dt())
-    end
-end
-
-
-#=
-
-For each cardinal compass direction, there is the opposite
-dirtection.
 
 For two puzzle pieces that share a vertical edge, the piece on the
 left's `E` edge will have the same `EdgeType` as that of the `W` edge
-of the piece on the right.  The will have opposite `BallOrSocket`s.
+of the piece on the right.  They will have opposite `BallOrSocket`s.
 
 =#
-
-opposite(::N) = S()
-opposite(::E) = W()
-opposite(::S) = N()
-opposite(::W) = E()
-
-next(::N) = E()
-next(::E) = S()
-next(::S) = W()
-next(::W) = N()
-
-previous(::N) = W()
-previous(::E) = N()
-previous(::S) = E()
-previous(::W) = S()
 
 
 """
@@ -142,12 +88,6 @@ function Base.getindex(sp::SolvedPuzzle, row::Int, col::Int)
     end
     sp.grid[row, col]
 end
-
-
-neighbor_coordinates(spp::SolvedPuzzlePiece, ::N) = [spp.row - 1, spp.col]
-neighbor_coordinates(spp::SolvedPuzzlePiece, ::E) = [spp.row, spp.col + 1]
-neighbor_coordinates(spp::SolvedPuzzlePiece, ::S) = [spp.row + 1, spp.col]
-neighbor_coordinates(spp::SolvedPuzzlePiece, ::W) = [spp.row, spp.col - 1]
 
 
 #=
@@ -217,7 +157,7 @@ function assign_unique_unassigned_edges(sp::SolvedPuzzle)::SolvedPuzzle
                     ## Edge not yet assigned
                     new_edge_type = pop!(edge_types)
                     neignbor =
-                        sp[neighbor_coordinates(piece, direction)...]
+                        sp[direction(piece.row, piece.col)...]
                     ## Maybe we should randomize which BallOrSocket to
                     ## use, but why bother?
                     piece.edges[direction] = Edge(new_edge_type, Ball())

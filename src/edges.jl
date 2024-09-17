@@ -10,7 +10,7 @@ shape of interlocking edge represents another edge type.
 
 MORE PRACTICALLY THOUGH: since we don't want to match two puzzle
 pieces on a flat perimeter edge, each edge on the perimeter of the
-puzzle should have a different edge type.  For a 3 by 5 puzzle that
+puzzle should have a different edge type.  For a 3 by 5 puzzle, that
 gives 16 edge types before you start defining edge types for the
 internal edges.
 
@@ -103,7 +103,9 @@ them.
 
 `EdgeType`s can be ordered by their `uid`.
 
-Wearbitrarily decide that `Ball` comes before `Socket`.
+We arbitrarily decide that `Ball` comes before `Socket`.
+
+We can then define a total ordering on `Edge`s.
 
 =#
 
@@ -117,6 +119,12 @@ end
 
 function Base.isless(::Ball, ::Socket)
     true
+end
+
+function Base.isless(a::Edge, b::Edge)
+    (isless(a.edge_type, b.edge_type) ||
+        (a.edge_type == b.edge_type &&
+        isless(a.bs, b.bs)))
 end
 
 

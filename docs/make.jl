@@ -38,6 +38,8 @@ makedocs(;
     pages=[
         "Home" => "index.md",
         "Edges" => "edges.md",
+        "Grid" => "grid.md",
+        "PuzzlePieces" => "puzzle_pieces.md",
         "SolvedPuzzle" => "solved_puzzle.md"
     ],
 )
