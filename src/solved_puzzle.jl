@@ -1,6 +1,7 @@
 export CardinalDirection, N, E, S, W
 export SolvedPuzzlePiece, SolvedPuzzle
 export neighbor_coordinates, do_cardinal_directions
+export opposite, next, previous
 export assign_perimeter_edges, assign_unique_unassigned_edges
 
 
@@ -65,6 +66,16 @@ opposite(::N) = S()
 opposite(::E) = W()
 opposite(::S) = N()
 opposite(::W) = E()
+
+next(::N) = E()
+next(::E) = S()
+next(::S) = W()
+next(::W) = N()
+
+previous(::N) = W()
+previous(::E) = N()
+previous(::S) = E()
+previous(::W) = S()
 
 
 """

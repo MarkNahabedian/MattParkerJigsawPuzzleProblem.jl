@@ -1,6 +1,18 @@
 using MattParkerJigsawPuzzleProblem
 using Test
 
+@testset "Cardinal directions" begin
+    do_cardinal_directions() do dir
+        @test opposite(opposite(dir)) == dir
+        @test next(previous(dir)) == dir
+        @test previous(next(dir)) == dir
+        @test next(dir) == opposite(previous(dir))
+        @test next(dir) == previous(opposite(dir))
+        @test previous(dir) == opposite(next(dir))
+        @test previous(dir) == next(opposite(dir))
+    end
+end
+
 @testset "Make SolvedPuzzle" begin
     sp = SolvedPuzzle(3, 4)
     assign_perimeter_edges(sp)
