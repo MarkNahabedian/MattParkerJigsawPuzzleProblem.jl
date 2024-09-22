@@ -1,5 +1,5 @@
 export ALL_EDGE_TYPES, EdgeType, BallOrSocket, Ball, Socket
-export opposite, Edge, edges_match
+export opposite, Edge, isperimeter, edges_mate
 
 #=
 
@@ -37,6 +37,9 @@ let
         isperimeter::Bool
         uid::Int
         
+        ## For testing:
+        EdgeType(isperimeter, uid) = new(isperimeter, uid)
+
         function EdgeType(isperimeter)
             et = new(isperimeter,
                      let
@@ -59,6 +62,8 @@ Creates a unique `EdgeType`.
 perimeter of the puzzle.
 """ EdgeType
 
+
+isperimeter(e::EdgeType) = e.isperimeter
 
 #=
 
@@ -94,6 +99,11 @@ struct Edge
     edge_type::EdgeType
     bs::BallOrSocket
 end
+
+isperimeter(e::Edge) = isperimeter(e.edge_type)
+isperimeter(::Missing) = false
+
+opposite(edge::Edge) = Edge(edge.edge_type, opposite(edge.bs))
 
 
 #=
@@ -136,12 +146,12 @@ opposites.
 =#
 
 """
-    edges_match(::Edge, ::Edge)::Bool
+    edges_mate(::Edge, ::Edge)::Bool
 
-Two `Edge`s match if they have the same `EdgeType` and their `bs`s are
+Two `Edge`s mate if they have the same `EdgeType` and their `bs`s are
 opposites.
 """
-function edges_match(e1::Edge, e2::Edge)::Bool
+function edges_mate(e1::Edge, e2::Edge)::Bool
     (e1.edge_type == e2.edge_type) &&
         (opposite(e1.bs) == e2.bs)
 end

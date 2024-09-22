@@ -23,26 +23,63 @@ using Test
     @test W()(2, 2) == [2, 1]
 end
 
-@testset "Make SolvedPuzzle" begin
-    sp = SolvedPuzzle(3, 4)
-    assign_perimeter_edges(sp)
-    assign_unique_unassigned_edges(sp)
-    # Do all of the edges match?
-    (rows, cols) = size(sp)
-    for r in 1:rows
-        for c in 1:cols
-            this_piece = sp[r, c]
-            do_cardinal_directions() do direction
-                neignbor = sp[direction(this_piece.row, this_piece.col)...]
-                if neignbor == nothing
-                    this_piece.edges[direction].bs == Ball()
-                else
-                    @test edges_match(this_piece.edges[direction],
-                                      neignbor.edges[opposite(direction)])
+@testset "GridCell operations" begin
+    grid = new_grid(3, 3)
+    for r in 1:3
+        for c in 1:3
+            grid[r, c] = GridCell(r, c, MutablePuzzlePiece(),
+                                  rotation(r + c))
+        end
+    end
+    @test N()(grid[2, 2]) == [1, 2]
+    @test E()(grid[2, 2]) == [2, 3]
+    @test S()(grid[2, 2]) == [3, 2]
+    @test W()(grid[2, 2]) == [2, 1]
+    e = Edge(EdgeType(false), Ball())
+    set_edge!(grid[1, 1], S(), e)
+    @test get_edge(grid[1, 1], S()) == e
+end
+
+@testset "MultipleSolutionPuzzle - single grid" begin
+    puzzle = MultipleSolutionPuzzle(3, 5, 1)
+    ## Verify for each grid that the perimeters are correct:
+    (nrows, ncols) = size(puzzle)
+    for g in 1:length(puzzle.grids)
+        grid = puzzle.grids[g]
+        for row in 1:nrows
+            for col in 1:ncols
+                cell = grid[row, col]
+                if row == 1
+                    @test isperimeter(cell, N())
+                elseif row == nrows
+                    @test isperimeter(cell, S())
+                end
+                if col == 1
+                    @test isperimeter(cell, W())
+                elseif col == ncols
+                    @test isperimeter(cell, E())
+                end
+            end
+        end
+    end
+    ## Verify for each grid that the edges mate
+    for grid in puzzle.grids
+        (nrows, ncols) = size(grid)
+        for r in 1:nrows
+            for c in 1:ncols
+                cell = grid[r, c]
+                for direction in CARDINAL_DIRECTIONS
+                    neighbor = direction(grid, cell)
+                    # Make sure we haven't fallen off the edge of the
+                    # grid:
+                    if neighbor isa GridCell
+                    # We're testing every edge twice.  So what?
+                        @test edges_mate(get_edge(cell, direction),
+                                         get_edge(neighbor, opposite(direction)))
+                    end
                 end
             end
         end
     end
 end
-
 

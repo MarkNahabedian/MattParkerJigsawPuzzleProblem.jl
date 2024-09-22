@@ -1,8 +1,10 @@
-export CardinalDirection, N, E, S, W
+export CardinalDirection, N, E, S, W, CARDINAL_DIRECTIONS
 export opposite, next, previous
 export cardinal_directions_from
 export do_cardinal_directions
-export edge_direction
+export rotation, GridCell
+export get_edge, set_edge!, direction_for_edge
+export edge_direction, new_grid
 
 #=
 
@@ -27,6 +29,8 @@ struct N <: CardinalDirection end
 struct E <: CardinalDirection end
 struct S <: CardinalDirection end
 struct W <: CardinalDirection end
+
+const CARDINAL_DIRECTIONS = (N(), E(), S(), W())
 
 #=
 
@@ -66,6 +70,11 @@ previous(::N) = W()
 previous(::E) = N()
 previous(::S) = E()
 previous(::W) = S()
+
+edge_index(::N) = 1
+edge_index(::E) = 2
+edge_index(::S) = 3
+edge_index(::W) = 4
 
 
 #=
@@ -125,10 +134,10 @@ checking must be by their callers.done
 
 =#
 
-(::N)(row, col) = [row - 1, col]
-(::E)(row, col) = [row,     col + 1]
-(::S)(row, col) = [row + 1, col]
-(::W)(row, col) = [row,     col - 1]
+(::N)(row::Int, col::Int) = [row - 1, col]
+(::E)(row::Int, col::Int) = [row,     col + 1]
+(::S)(row::Int, col::Int) = [row + 1, col]
+(::W)(row::Int, col::Int) = [row,     col - 1]
 
 #=
 
@@ -141,18 +150,120 @@ The rotation of a puzzle piece is represented by one of the integers
 =#
 
 """
-    edge_direction(rotation::Int, edge_index::Int)::CardinalDirection
+    rotation(rot::Int)
+
+Normalizes the rotation of the placement of a puzzle piece to one of
+0, 1, 2, or 3.
+"""
+rotation(r::Int) = mod(r, 4)
+
+
+"""
+    GridCell(::AbstractPuzzlePiece, rotation::Int)
+
+A GridCell is the container for a puzzle piece in a puzzle grid.
+"""
+struct GridCell
+    row::Int
+    col::Int
+    puzzle_piece
+    rotation::Int
+
+    GridCell(row, col, piece, rotation) =
+        new(row, col, piece, mod(rotation, 4))
+end
+
+ImmutablePuzzlePiece(cell::GridCell) =
+    ImmutablePuzzlePiece(cell.puzzle_piece)
+
+#=
+
+Within a grid, a `GridCell` has a neighbor in each direction.
+
+=#
+
+(cd::CardinalDirection)(gc::GridCell) = cd(gc.row, gc.col)
+
+function (cd::CardinalDirection)(grid::Array{Union{Missing, GridCell}, 2},
+                                 cell::GridCell)
+    (r, c) = cd(cell.row, cell.col)
+    (nrows, ncols) = size(grid)
+    if !(r in 1:nrows) || !(c in 1:ncols)
+        return missing
+    end
+    return grid[r, c]
+end
+     
+
+function get_edge(gc::GridCell, direction::CardinalDirection)
+    i = edge_index(edge_index(direction) + gc.rotation)
+    gc.puzzle_piece.edges[i]
+end
+
+function set_edge!(gc::GridCell, direction::CardinalDirection,
+                   edge::Edge)
+    i = edge_index(edge_index(direction) + gc.rotation)
+    gc.puzzle_piece.edges[i] = edge
+end
+
+isperimeter(cell::GridCell, direction::CardinalDirection) =
+    isperimeter(get_edge(cell, direction))
+
+function direction_for_edge(cell::GridCell, edge::Edge)
+    for d in CARDINAL_DIRECTIONS
+        e = get_edge(cell, d)
+        if e isa Edge
+            if e == edge
+                return d
+            end
+        end
+    end
+    return missing
+end
+
+
+"""
+    edge_direction(rotation::Int, index::Int)::CardinalDirection
 
 For the specified `edge_index` and rotation of a puzzle piece, return
 the `CardinalDirection` that that edge faces.
 """
-function edge_direction(piece_rotation::Int, edge_index::Int)::CardinalDirection
+function edge_direction(piece_rotation::Int, index::Int)::CardinalDirection
     @assert piece_rotation in 0:3
-    direction = cardinal_directions_from(N())[mod(edge_index, Base.OneTo(4))]
+    direction = cardinal_directions_from(N())[edge_index(index)]
     while piece_rotation > 0
         direction = previous(direction)
         piece_rotation -= 1
     end
     direction
 end
+
+
+"""
+    perimeter_edge_indices(grid::Array{GridCell, 2}, row::int, col::Int)
+
+Returns a vector of the indices of edges of the specified cell of
+`grid` that are perimeter edges.
+"""
+function perimeter_edge_indices(grid::Array{GridCell, 2},
+                                row::Int, col::Int)
+    indices = []
+    dims = size(grid)
+    if row == 1;       push!(indices, 1); end
+    if col == dims[2]; push!(indices, 2); end
+    if row == dims[1]; push!(indices, 3); end
+    if col == 1;       push!(indices, 4); end
+    indices
+end
+
+
+"""
+    new_grid(number_of_rows, number_of_columns)
+
+Creates an empty puzzle grid of the specified dimensions.
+"""
+new_grid(number_of_rows, number_of_columns) =
+    Array{Union{Missing, GridCell}, 2}(missing,
+                                       number_of_rows,
+                                       number_of_columns)
 
