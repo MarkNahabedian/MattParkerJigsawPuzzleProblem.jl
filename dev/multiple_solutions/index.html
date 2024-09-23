@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>- · MattParkerJigsawPuzzleProblem.jl</title><meta name="title" content="- · MattParkerJigsawPuzzleProblem.jl"/><meta property="og:title" content="- · MattParkerJigsawPuzzleProblem.jl"/><meta property="twitter:title" content="- · MattParkerJigsawPuzzleProblem.jl"/><meta name="description" content="Documentation for MattParkerJigsawPuzzleProblem.jl."/><meta property="og:description" content="Documentation for MattParkerJigsawPuzzleProblem.jl."/><meta property="twitter:description" content="Documentation for MattParkerJigsawPuzzleProblem.jl."/><meta property="og:url" content="https://MarkNahabedian.github.io/MattParkerJigsawPuzzleProblem.jl/multiple_solutions/"/><meta property="twitter:url" content="https://MarkNahabedian.github.io/MattParkerJigsawPuzzleProblem.jl/multiple_solutions/"/><link rel="canonical" href="https://MarkNahabedian.github.io/MattParkerJigsawPuzzleProblem.jl/multiple_solutions/"/><script data-outdated-warner src="../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../assets/documenter.js"></script><script src="../search_index.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="../">MattParkerJigsawPuzzleProblem.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../">Home</a></li><li><a class="tocitem" href="../edges/">Edges</a></li><li><a class="tocitem" href="../grid/">Grid</a></li><li><a class="tocitem" href="../puzzle_pieces/">PuzzlePieces</a></li><li><a class="tocitem" href="../solved_puzzle/">SolvedPuzzle</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>-</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>-</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/MarkNahabedian/MattParkerJigsawPuzzleProblem.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/MarkNahabedian/MattParkerJigsawPuzzleProblem.jl/blob/main/src/multiple_solutions.jl" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><pre><code class="language-julia hljs">export MultipleSolutionPuzzle, perimeters</code></pre><p>Matt Parker&#39;s YouTube video is about jigsaw puzzles that have more than one solution.  Here we attempt to construct such a puzzle by makiing one grid for each solution and placiing the same set of <a href="../#MattParkerJigsawPuzzleProblem.MutablePuzzlePiece"><code>MutablePuzzlePiece</code></a>s, with different locations and orientations, in each grid.</p><pre><code class="language-julia hljs">struct MultipleSolutionPuzzle
+    grids
+
+    # Iy might be simpler to populate the first grid with Pieces that
+    # have no edges yet, add the perimeter edges and then permute
+    # them for the other grids.
+    function MultipleSolutionPuzzle(number_of_rows, number_of_columns,
+                                    number_of_grids)
+        puzzle = new(map(_ -&gt; new_grid(number_of_rows, number_of_columns),
+                         1:number_of_grids))
+        # Populate the first grid and set its perimeter edges:
+        grid1 = puzzle.grids[1]
+        corners = []
+        edges = []
+        middle = []
+        for r in 1:number_of_rows
+            for c in 1:number_of_columns
+                piece = MutablePuzzlePiece()
+                cell = GridCell(r, c, piece, rand(0:3))
+                grid1[r, c] = cell
+                perimeter_count = 0
+                if r == 1
+                    set_edge!(cell, N(), Edge(EdgeType(true), Ball()))
+                    perimeter_count += 1
+                elseif r == number_of_rows
+                    set_edge!(cell, S(), Edge(EdgeType(true), Ball()))
+                    perimeter_count += 1
+                end
+                if c == 1
+                    set_edge!(cell, W(), Edge(EdgeType(true), Ball()))
+                    perimeter_count += 1
+                elseif c == number_of_columns
+                    set_edge!(cell, E(), Edge(EdgeType(true), Ball()))
+                    perimeter_count += 1
+                end
+                if perimeter_count == 2
+                    push!(corners, piece)
+                elseif perimeter_count == 1
+                    push!(edges, piece)
+                else
+                    push!(middle, piece)
+                end
+            end
+        end
+        # Populate the remaining grids with permutations of the
+        # pieces from grid1:
+        function cell_rotation(row, col, piece::MutablePuzzlePiece)
+            count_perimeters(pmtrs) = sum(p -&gt; p == true, pmtrs)
+            cell_perimeters = perimeters(puzzle, row, col)
+            for rot in 0:3
+                piece_perimeters =
+                    [ isperimeter(piece.edges[i])
+                      for i in edge_index.((1:4) .+ rot) ]
+                @assert count_perimeters(cell_perimeters) ==
+                    count_perimeters(piece_perimeters)
+                if cell_perimeters == piece_perimeters
+                    return rot
+                end
+            end
+            @assert false &quot;Can&#39;t determine piece rotation.&quot;
+        end
+        for i in 2:number_of_grids
+            grid = puzzle.grids[i]
+            permuted_corners = Random.shuffle(corners)
+            permuted_edges = Random.shuffle(edges)
+            permuted_middle = Random.shuffle(middle)
+            for r in 1:number_of_rows
+                for c in 1:number_of_columns
+                    if r in [1, number_of_rows] &amp;&amp; c in [1, number_of_columns]
+                        piece = pop!(permuted_corners)
+                    elseif r in [1, number_of_rows] || c in [1, number_of_columns]
+                        piece = pop!(permuted_edges)
+                    else
+                        piece = pop!(permuted_middle)
+                    end
+                    rotation = cell_rotation(r, c, piece)
+                    grid[r, c] = GridCell(r, c, piece, rotation)
+                end
+            end
+        end
+        # Make sure every piece is in every grid exactly once:
+        let
+            all_pieces = Set([corners..., edges..., middle...])
+            for grid in puzzle.grids
+                grid_pieces = Set()
+                for r in 1:number_of_rows
+                    for c in 1:number_of_columns
+                        push!(grid_pieces, grid[r, c].puzzle_piece)
+                    end
+                end
+                @assert all_pieces == grid_pieces
+            end
+        end</code></pre><p>Assign edges to every puzzle piece</p><pre><code class="language-julia hljs">        function propagate_edge(edge::Edge, piece::MutablePuzzlePiece)
+            # edge is the one that was just set in piece.
+            # Propagate tp the neighboring piece in each grid.
+            for gridi in 1:length(puzzle.grids)
+                grid = puzzle.grids[gridi]
+                cell = grid[findfirst(grid) do cell
+                                cell.puzzle_piece == piece
+                            end]
+                direction = direction_for_edge(cell, edge)
+                neighbor = direction(grid, cell)
+                @assert isa(neighbor, GridCell)
+                neighbor_edge = get_edge(neighbor, opposite(direction))
+                if ismissing(neighbor_edge)
+                    neighbor_edge = opposite(edge)
+                    set_edge!(neighbor, opposite(direction),
+                              neighbor_edge)
+                    propagate_edge(neighbor_edge, neighbor.puzzle_piece)
+                else
+                    # Neighbor already has an Edge facing us, so make
+                    # sure it matches:
+                    if !edges_mate(edge, neighbor_edge)
+                        println(&quot;Edges don&#39;t mate: $gridi $cell\n$edge\n$neighbor_edge\n&quot;)
+                    end
+                end
+            end
+        end
+        for r in 1:number_of_rows
+            for c in 1:number_of_columns
+                for direction in CARDINAL_DIRECTIONS
+                    cell = grid1[r, c]
+                    if ismissing(get_edge(cell, direction))
+                        new_edge = Edge(EdgeType(false),
+                                        (Ball(), Socket())[rand(1:2)])
+                        set_edge!(cell, direction, new_edge)
+                        propagate_edge(new_edge, cell.puzzle_piece)
+                    end
+                end
+            end
+        end
+        # Make sure every cell has a puzzle piece with all four edges:
+        for g in 1:length(puzzle.grids)
+            grid = puzzle.grids[g]
+            for r in 1:number_of_rows
+                for c in 1:number_of_columns
+                    cell = grid[r, c]
+                    @assert(cell.puzzle_piece isa MutablePuzzlePiece,
+                            &quot;grid $g, cell $r $c is not a puzzle piece&quot;)
+                    for direction in CARDINAL_DIRECTIONS
+                        @assert(!ismissing(get_edge(cell, direction)),
+                                &quot;grid, $g cell $r $c has no edge for $direction&quot;)
+                    end
+                end
+            end
+        end
+        puzzle
+    end
+end
+
+
+Base.size(puzzle::MultipleSolutionPuzzle) = size(puzzle.grids[1])
+
+
+&quot;&quot;&quot;
+    perimeters(puzzle::MultipleSolutionPuzzle, row::Int, col::Int)
+
+Returns a four element vector indicating for each direction (N, E, S,
+W) whether that side of the cell at `row`, `col` is a perimeter of the
+puzzle.
+&quot;&quot;&quot;
+function perimeters(puzzle::MultipleSolutionPuzzle, row::Int, col::Int)
+    (nrows, ncols) = size(puzzle)
+    [
+        row == 1,
+        col == ncols,
+        row == nrows,
+        col == 1
+    ]
+end
+
+
+function check_puzzle(puzzle::MultipleSolutionPuzzle)
+    errors = []
+    (nrows, ncols) = size(puzzle)
+    for gridi in 1:length(puzzle.grids)
+        grid = puzzle.grids[gridi]
+        for r in 1:nrows
+            for c in 1:ncols
+                for d in [N(), E()]
+                    cell = grid[r, c]
+                    neighbor = d(grid, cell)
+                    cell_edge = get_edge(cell, d)
+                    neighbor_edge = get_edge(neighbor, opposite(d))
+                    if !edges_mate(cell_edge, neighbor_edge)
+                        push!(errors,
+                              &quot;$gridi $r $c $d: $cell_edge $neighbor_edge&quot;)
+                    end
+                end
+            end
+        end
+    end
+    return isempty(erros), errors
+end</code></pre><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.7.0 on <span class="colophon-date" title="Monday 23 September 2024 12:11">Monday 23 September 2024</span>. Using Julia version 1.10.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
