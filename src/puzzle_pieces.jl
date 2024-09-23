@@ -89,13 +89,13 @@ struct MutablePuzzlePiece <: AbstractPuzzlePiece
         new(Vector{Union{Missing, Edge}}(missing, 4))
 end
 
-edge(pp::MutablePuzzlePiece, index::Int) =
-    mp.edges[edge_index(index)]
+edge(piece::MutablePuzzlePiece, index::Int) =
+    piece.edges[edge_index(index)]
 
 
 #=
 
-Once puzzle is fully defined, we want to make the pieces immutable.
+Once a puzzle is fully defined, we want to make the pieces immutable.
 We can make an [`ImmutablePuzzlePiece`](@ref) for each piece of the
 newly constructed puzzle.
 
@@ -105,10 +105,10 @@ remaining three edges clockwise from it.
 
 =#
 
-function find_least_edge(pp::MutablePuzzlePiece)
+function find_least_edge(piece::MutablePuzzlePiece)
     index_of_least = 1
     for i in 1:4
-        if edge(mp, i) < edge(mp, index_of_least)
+        if edge(piece, i) < edge(piece, index_of_least)
             index_of_least = i
         end
     end
@@ -127,9 +127,9 @@ struct ImmutablePuzzlePiece <: AbstractPuzzlePiece
     function ImmutablePuzzlePiece(from::MutablePuzzlePiece)
         @assert length(from.edges) == 4
         @assert all(e -> e isa Edge, from.edges)
-        least = index_of_least(from)
+        least = find_least_edge(from)
         new(tuple(map(i -> edge(from, edge_index(i)),
-                      least : (least + 3))))
+                      least : (least + 3))...))
     end
 end
 

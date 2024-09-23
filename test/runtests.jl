@@ -83,3 +83,23 @@ end
     end
 end
 
+#=
+
+using MattParkerJigsawPuzzleProblem
+
+puzzle = MultipleSolutionPuzzle(3, 3, 1)
+
+terserep.(puzzle.grids[1])
+
+ "1_/13s/14s/2_"   "3_/15b/16s/13b"   "4_/5_/17s/15s"
+ "14b/18b/19b/6_"  "16b/20b/21s/18s"  "17b/7_/22b/20s"
+ "19s/23b/8_/9_"   "21b/24s/10_/23s"  "22s/12_/11_/24b"
+
+ABOVE OK
+
+pieces = ImmutablePuzzlePiece.(puzzle.grids[1])
+
+terserep.(pieces)
+
+=#
+
