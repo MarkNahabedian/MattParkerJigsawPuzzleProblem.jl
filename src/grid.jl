@@ -4,7 +4,7 @@ export cardinal_directions_from
 export do_cardinal_directions
 export rotation, GridCell
 export get_edge, set_edge!, direction_for_edge
-export edge_direction, new_grid
+export edge_direction, Grid, new_grid
 
 #=
 
@@ -23,6 +23,32 @@ Each cell has four *neighbors*, one in each of the cardinal compass
 directions.
 
 =#
+
+"""
+    GridCell(::AbstractPuzzlePiece, rotation::Int)
+
+A GridCell is the container for a puzzle piece in a puzzle grid.
+"""
+struct GridCell
+    row::Int
+    col::Int
+    puzzle_piece
+    rotation::Int
+
+    GridCell(row, col, piece, rotation) =
+        new(row, col, piece, mod(rotation, 4))
+end
+
+const Grid = Array{Union{Missing, GridCell}, 2}
+
+"""
+    new_grid(number_of_rows, number_of_columns)::Grid
+
+Creates an empty puzzle grid of the specified dimensions.
+"""
+new_grid(number_of_rows, number_of_columns)::Grid =
+    Grid(missing, number_of_rows, number_of_columns)
+
 
 abstract type CardinalDirection end
 struct N <: CardinalDirection end
@@ -158,21 +184,6 @@ Normalizes the rotation of the placement of a puzzle piece to one of
 rotation(r::Int) = mod(r, 4)
 
 
-"""
-    GridCell(::AbstractPuzzlePiece, rotation::Int)
-
-A GridCell is the container for a puzzle piece in a puzzle grid.
-"""
-struct GridCell
-    row::Int
-    col::Int
-    puzzle_piece
-    rotation::Int
-
-    GridCell(row, col, piece, rotation) =
-        new(row, col, piece, mod(rotation, 4))
-end
-
 ImmutablePuzzlePiece(cell::GridCell) =
     ImmutablePuzzlePiece(cell.puzzle_piece)
 
@@ -184,8 +195,7 @@ Within a grid, a `GridCell` has a neighbor in each direction.
 
 (cd::CardinalDirection)(gc::GridCell) = cd(gc.row, gc.col)
 
-function (cd::CardinalDirection)(grid::Array{Union{Missing, GridCell}, 2},
-                                 cell::GridCell)
+function (cd::CardinalDirection)(grid::Grid, cell::GridCell)
     (r, c) = cd(cell.row, cell.col)
     (nrows, ncols) = size(grid)
     if !(r in 1:nrows) || !(c in 1:ncols)
@@ -240,13 +250,12 @@ end
 
 
 """
-    perimeter_edge_indices(grid::Array{GridCell, 2}, row::int, col::Int)
+    perimeter_edge_indices(grid::Grid, row::int, col::Int)
 
 Returns a vector of the indices of edges of the specified cell of
 `grid` that are perimeter edges.
 """
-function perimeter_edge_indices(grid::Array{GridCell, 2},
-                                row::Int, col::Int)
+function perimeter_edge_indices(grid::Grid, row::Int, col::Int)
     indices = []
     dims = size(grid)
     if row == 1;       push!(indices, 1); end
@@ -255,15 +264,4 @@ function perimeter_edge_indices(grid::Array{GridCell, 2},
     if col == 1;       push!(indices, 4); end
     indices
 end
-
-
-"""
-    new_grid(number_of_rows, number_of_columns)
-
-Creates an empty puzzle grid of the specified dimensions.
-"""
-new_grid(number_of_rows, number_of_columns) =
-    Array{Union{Missing, GridCell}, 2}(missing,
-                                       number_of_rows,
-                                       number_of_columns)
 
