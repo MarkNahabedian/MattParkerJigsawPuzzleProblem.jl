@@ -1,4 +1,5 @@
-export ALL_EDGE_TYPES, EdgeType, BallOrSocket, Ball, Socket
+export ALL_EDGE_TYPES, EdgeType
+export BallOrSocket, Ball, Socket, Straight
 export opposite, Edge, isperimeter, edges_mate
 
 #=
@@ -69,23 +70,26 @@ isperimeter(e::EdgeType) = e.isperimeter
 
 At the edge where two puzzle pieces interlock, the edges of those
 pieces are mirror images of each other.  At that meeting edge, one
-piece has a *ball* and the other has a *socket*.
+piece has a *ball* and the other has a *socket*.  If the edge is at
+the border of the puzzle then it is straight.
 
 The edge of a puzzle piece is thus characterized by its EdgeType and
-whether it is a ball or socket.
+whether it is a ball, socket, or straight.
 
 `Ball` and `Socket` are opposites.
 
-We arbitrarily decide that a perimeter edge is always a *ball*.
+`Straight` is its own opposite.
 
 =#
 
 abstract type BallOrSocket end
 struct Ball <: BallOrSocket end
 struct Socket <: BallOrSocket end
+struct Straight <: BallOrSocket end
 
 opposite(::Ball) = Socket()
 opposite(::Socket) = Ball()
+opposite(::Straight) = Straight()
 
 
 """
@@ -152,7 +156,9 @@ Two `Edge`s mate if they have the same `EdgeType` and their `bs`s are
 opposites.
 """
 function edges_mate(e1::Edge, e2::Edge)::Bool
-    (e1.edge_type == e2.edge_type) &&
-        (opposite(e1.bs) == e2.bs)
+    # For perimeter edges the EdgeType doesn't matter:
+    (e1.bs == e2.bs == Straight()) ||
+        ((e1.edge_type == e2.edge_type) &&
+        (opposite(e1.bs) == e2.bs))
 end
 

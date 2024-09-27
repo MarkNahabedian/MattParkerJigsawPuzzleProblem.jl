@@ -1,4 +1,4 @@
-export MultipleSolutionPuzzle, perimeters
+export MultipleSolutionPuzzle, perimeters, puzzle_pieces
 
 #=
 
@@ -32,25 +32,27 @@ struct MultipleSolutionPuzzle
                 grid1[r, c] = cell
                 perimeter_count = 0
                 if r == 1
-                    set_edge!(cell, N(), Edge(EdgeType(true), Ball()))
+                    set_edge!(cell, N(), Edge(EdgeType(true), Straight()))
                     perimeter_count += 1
                 elseif r == number_of_rows
-                    set_edge!(cell, S(), Edge(EdgeType(true), Ball()))
+                    set_edge!(cell, S(), Edge(EdgeType(true), Straight()))
                     perimeter_count += 1
                 end
                 if c == 1
-                    set_edge!(cell, W(), Edge(EdgeType(true), Ball()))
+                    set_edge!(cell, W(), Edge(EdgeType(true), Straight()))
                     perimeter_count += 1
                 elseif c == number_of_columns
-                    set_edge!(cell, E(), Edge(EdgeType(true), Ball()))
+                    set_edge!(cell, E(), Edge(EdgeType(true), Straight()))
                     perimeter_count += 1
                 end
                 if perimeter_count == 2
                     push!(corners, piece)
                 elseif perimeter_count == 1
                     push!(edges, piece)
-                else
+                elseif perimeter_count == 0
                     push!(middle, piece)
+                else
+                    error("Puzzle is too small")
                 end
             end
         end
@@ -80,7 +82,8 @@ struct MultipleSolutionPuzzle
                 for c in 1:number_of_columns
                     if r in [1, number_of_rows] && c in [1, number_of_columns]
                         piece = pop!(permuted_corners)
-                    elseif r in [1, number_of_rows] || c in [1, number_of_columns]
+                    elseif (r in [1, number_of_rows] ||
+                        c in [1, number_of_columns])
                         piece = pop!(permuted_edges)
                     else
                         piece = pop!(permuted_middle)
@@ -106,7 +109,7 @@ struct MultipleSolutionPuzzle
         # Assign edges to every puzzle piece
         function propagate_edge(edge::Edge, piece::MutablePuzzlePiece)
             ## edge is the one that was just set in piece.
-            ## Propagate tp the neighboring piece in each grid.
+            ## Propagate to the neighboring piece in each grid.
             for gridi in 1:length(puzzle.grids)
                 grid = puzzle.grids[gridi]
                 cell = grid[findfirst(grid) do cell
@@ -130,6 +133,8 @@ struct MultipleSolutionPuzzle
                 end
             end
         end
+        ## Fill in the missing edges of grid1 and propagate the new
+        ## edges:
         for r in 1:number_of_rows
             for c in 1:number_of_columns
                 for direction in CARDINAL_DIRECTIONS
@@ -143,6 +148,7 @@ struct MultipleSolutionPuzzle
                 end
             end
         end
+        terserep(puzzle)
         ## Make sure every cell has a puzzle piece with all four edges:
         for g in 1:length(puzzle.grids)
             grid = puzzle.grids[g]
@@ -205,5 +211,19 @@ function check_puzzle(puzzle::MultipleSolutionPuzzle)
         end
     end
     return isempty(erros), errors
+end
+
+
+"""
+    puzzle_pieces(puzzle::MultipleSolutionPuzzle)::Vector{MutablePuzzlePiece}
+
+Returns a vector of all of the `MutablePuzzlePiece`s of `puzzle`.
+"""
+function puzzle_pieces(puzzle::MultipleSolutionPuzzle)
+    pieces = []
+    for cell in puzzle.grids[1]
+        push!(pieces, cell.puzzle_piece)
+    end
+    pieces
 end
 
