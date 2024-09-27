@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>PuzzlePieces · MattParkerJigsawPuzzleProblem.jl</title><meta name="title" content="PuzzlePieces · MattParkerJigsawPuzzleProblem.jl"/><meta property="og:title" content="PuzzlePieces · MattParkerJigsawPuzzleProblem.jl"/><meta property="twitter:title" content="PuzzlePieces · MattParkerJigsawPuzzleProblem.jl"/><meta name="description" content="Documentation for MattParkerJigsawPuzzleProblem.jl."/><meta property="og:description" content="Documentation for MattParkerJigsawPuzzleProblem.jl."/><meta property="twitter:description" content="Documentation for MattParkerJigsawPuzzleProblem.jl."/><meta property="og:url" content="https://MarkNahabedian.github.io/MattParkerJigsawPuzzleProblem.jl/puzzle_pieces/"/><meta property="twitter:url" content="https://MarkNahabedian.github.io/MattParkerJigsawPuzzleProblem.jl/puzzle_pieces/"/><link rel="canonical" href="https://MarkNahabedian.github.io/MattParkerJigsawPuzzleProblem.jl/puzzle_pieces/"/><script data-outdated-warner src="../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../assets/documenter.js"></script><script src="../search_index.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="../">MattParkerJigsawPuzzleProblem.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../">Home</a></li><li><a class="tocitem" href="../edges/">Edges</a></li><li><a class="tocitem" href="../grid/">Grid</a></li><li class="is-active"><a class="tocitem" href>PuzzlePieces</a></li><li><a class="tocitem" href="../solved_puzzle/">SolvedPuzzle</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>PuzzlePieces</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>PuzzlePieces</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/MarkNahabedian/MattParkerJigsawPuzzleProblem.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/MarkNahabedian/MattParkerJigsawPuzzleProblem.jl/blob/main/src/puzzle_pieces.jl" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><pre><code class="language-julia hljs">export edge_index
 export AbstractPuzzlePiece, perimeter_edge_indices
-export MutablePuzzlePiece, ImmutablePuzzlePiece</code></pre><p>A jigsaw puzzle is constructed as a two dimensional grid of <em>pieces</em>.</p><p>Each piece has four <em>edges</em>, which we can identify using the small positive integers 1, 2, 3, and 4 (<em>edge indices</em>), which identify the piece&#39;s edges in clockwise order.  An edge is modeled by <a href="../#MattParkerJigsawPuzzleProblem.Edge"><code>Edge</code></a>.  A puzzle piece is basically a mapping from one of the four edge indices to an <a href="../#MattParkerJigsawPuzzleProblem.Edge"><code>Edge</code></a>.</p><p>In the solution of a puzzle, each piece should have a unique location in that grid and be in one of four rotations.</p><pre><code class="language-julia hljs">&quot;&quot;&quot;
+export MutablePuzzlePiece, ImmutablePuzzlePiece
+export mating_piece_indices</code></pre><p>A jigsaw puzzle is constructed as a two dimensional grid of <em>pieces</em>.</p><p>Each piece has four <em>edges</em>, which we can identify using the small positive integers 1, 2, 3, and 4 (<em>edge indices</em>), which identify the piece&#39;s edges in clockwise order.  An edge is modeled by <a href="../#MattParkerJigsawPuzzleProblem.Edge"><code>Edge</code></a>.  A puzzle piece is basically a mapping from one of the four edge indices to an <a href="../#MattParkerJigsawPuzzleProblem.Edge"><code>Edge</code></a>.</p><p>In the solution of a puzzle, each piece should have a unique location in that grid and be in one of four rotations.</p><pre><code class="language-julia hljs">&quot;&quot;&quot;
     edge_index(::Int)::Int
 
 Turns the argument value into a valid edge index using the modulus
@@ -18,6 +19,9 @@ AbstractPuzzlePiece is the abstract supertype for all types of jigsaw
 puzzle piece.
 &quot;&quot;&quot;
 abstract type AbstractPuzzlePiece end
+
+edge(piece::AbstractPuzzlePiece, index::Int) =
+    piece.edges[edge_index(index)]
 
 
 &quot;&quot;&quot;
@@ -57,10 +61,7 @@ struct MutablePuzzlePiece &lt;: AbstractPuzzlePiece
 
     MutablePuzzlePiece() =
         new(Vector{Union{Missing, Edge}}(missing, 4))
-end
-
-edge(piece::MutablePuzzlePiece, index::Int) =
-    piece.edges[edge_index(index)]</code></pre><p>Once a puzzle is fully defined, we want to make the pieces immutable. We can make an <a href="../#MattParkerJigsawPuzzleProblem.ImmutablePuzzlePiece"><code>ImmutablePuzzlePiece</code></a> for each piece of the newly constructed puzzle.</p><p>Since we have defined a total ordering for <code>Edge</code>s, we can identify a puzzle piece by an ordered sequence of its most <code>isless</code> edge and the remaining three edges clockwise from it.</p><pre><code class="language-julia hljs">function find_least_edge(piece::MutablePuzzlePiece)
+end</code></pre><p>Once a puzzle is fully defined, we want to make the pieces immutable. We can make an <a href="../#MattParkerJigsawPuzzleProblem.ImmutablePuzzlePiece"><code>ImmutablePuzzlePiece</code></a> for each piece of the newly constructed puzzle.</p><p>Since we have defined a total ordering for <code>Edge</code>s, we can identify a puzzle piece by an ordered sequence of its most <code>isless</code> edge and the remaining three edges clockwise from it.</p><pre><code class="language-julia hljs">function find_least_edge(piece::MutablePuzzlePiece)
     index_of_least = 1
     for i in 1:4
         if edge(piece, i) &lt; edge(piece, index_of_least)
@@ -77,7 +78,10 @@ end
 Constructs an `ImmutablePuzzlePiece` from a `MutablePuzzlePiece`.
 &quot;&quot;&quot;
 struct ImmutablePuzzlePiece &lt;: AbstractPuzzlePiece
-    edges
+    edges</code></pre><p>Constructor for testing</p><pre><code class="language-julia hljs">    function ImmutablePuzzlePiece(edges::Vector{Edge})
+        @assert length(edges) == 4
+        new(sort(edges))
+    end
 
     function ImmutablePuzzlePiece(from::MutablePuzzlePiece)
         @assert length(from.edges) == 4
@@ -86,4 +90,50 @@ struct ImmutablePuzzlePiece &lt;: AbstractPuzzlePiece
         new(tuple(map(i -&gt; edge(from, edge_index(i)),
                       least : (least + 3))...))
     end
-end</code></pre><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../grid/">« Grid</a><a class="docs-footer-nextpage" href="../solved_puzzle/">SolvedPuzzle »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.7.0 on <span class="colophon-date" title="Monday 23 September 2024 12:11">Monday 23 September 2024</span>. Using Julia version 1.10.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+end
+
+function Base.isless(piece1::ImmutablePuzzlePiece,
+                     piece2::ImmutablePuzzlePiece)
+    function test_index(i)
+        if i &gt; 4
+            return false
+        end
+        if isless(piece1.edges[i],
+                  piece2.edges[i])
+            true
+        elseif piece1.edges[i] == piece2.edges[i]
+            test_index(i + 1)
+        else
+            false
+        end
+    end
+    test_index(1)
+end
+
+
+&quot;&quot;&quot;
+    mating_piece_indices(continuation, piece1::ImmutablePuzzlePiece, piece1::ImmutablePuzzlePiece)
+
+for each `Edge` of `piece1` that mates with an `Edge` of `piece2,
+Calls `continuation, on the indices into those two pieces of those
+mating edges.
+&quot;&quot;&quot;
+function mating_piece_indices(continuation,
+                              piece1::ImmutablePuzzlePiece,
+                              piece2::ImmutablePuzzlePiece)
+    for idx1 in 1:4
+        for idx2 in 1:4
+            if edges_mate(edge(piece1, idx1),
+                          edge(piece2, idx2))</code></pre><p>Check for borders:</p><pre><code class="language-julia hljs">                if (edge(piece1, idx1 - 1).edge_type.isperimeter) &amp;&amp;
+                    !(edge(piece2, idx2 + 1).edge_type.isperimeter)
+                    continue
+                end
+                if (edge(piece1, idx1 + 1).edge_type.isperimeter) &amp;&amp;
+                    !(edge(piece2, idx2 - 1).edge_type.isperimeter)
+                    continue
+                end
+                continuation(idx1, idx2)
+            end
+        end
+    end
+end</code></pre><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../grid/">« Grid</a><a class="docs-footer-nextpage" href="../solved_puzzle/">SolvedPuzzle »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.7.0 on <span class="colophon-date" title="Friday 27 September 2024 17:00">Friday 27 September 2024</span>. Using Julia version 1.10.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

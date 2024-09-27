@@ -5,15 +5,14 @@ export terserep</code></pre><p>To help with debugging, we define a more terse re
 
 terserep(::Ball) = &quot;b&quot;
 terserep(::Socket) = &quot;s&quot;
+terserep(::Straight) = &quot;_&quot;
+
+terserep(::Nothing) = &quot;?&quot;
 
 terserep(edge::Edge) =
     @sprintf(&quot;%s%s&quot;,
              terserep(edge.edge_type),
-             if edge.edge_type.isperimeter
-                 &quot;_&quot;
-             else
-                 terserep(edge.bs)
-             end)
+             terserep(edge.bs))
 
 terserep(piece::AbstractPuzzlePiece) =
     join(terserep.(piece.edges), &quot;/&quot;)
@@ -21,4 +20,30 @@ terserep(piece::AbstractPuzzlePiece) =
 terserep(cell::GridCell) =
     join(terserep.([ get_edge(cell, direction)
                      for direction in CARDINAL_DIRECTIONS ]),
-         &quot;/&quot;)</code></pre><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.7.0 on <span class="colophon-date" title="Monday 23 September 2024 12:11">Monday 23 September 2024</span>. Using Julia version 1.10.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+         &quot;/&quot;)
+
+terserep(::Missing) = &quot;#&quot;
+
+function terserep(grid::Grid)
+    (nrows, ncols) = size(grid)
+    for r in 1:nrows
+        for c in 1:ncols
+            print(terserep(grid[r, c]), &quot;\t&quot;)
+        end
+        println()
+    end
+end
+
+
+
+&quot;&quot;&quot;
+    terserep(puzzle)
+
+Output a terse printed representation of the puzzle.
+&quot;&quot;&quot;
+function terserep(puzzle::MultipleSolutionPuzzle)
+    for grid in puzzle.grids
+        terserep(grid)
+        println()
+    end
+end</code></pre><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.7.0 on <span class="colophon-date" title="Friday 27 September 2024 17:00">Friday 27 September 2024</span>. Using Julia version 1.10.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
