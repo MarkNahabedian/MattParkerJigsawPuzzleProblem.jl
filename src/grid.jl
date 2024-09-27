@@ -4,7 +4,7 @@ export cardinal_directions_from
 export do_cardinal_directions
 export rotation, GridCell
 export get_edge, set_edge!, direction_for_edge
-export edge_direction, Grid, new_grid
+export edge_direction, Grid, new_grid, get_neighboring_edge, fit_piece
 
 #=
 
@@ -195,14 +195,17 @@ Within a grid, a `GridCell` has a neighbor in each direction.
 
 (cd::CardinalDirection)(gc::GridCell) = cd(gc.row, gc.col)
 
-function (cd::CardinalDirection)(grid::Grid, cell::GridCell)
-    (r, c) = cd(cell.row, cell.col)
+function (cd::CardinalDirection)(grid::Grid, row::Int, col::Int)
+    (r, c) = cd(row, col)
     (nrows, ncols) = size(grid)
     if !(r in 1:nrows) || !(c in 1:ncols)
         return missing
     end
     return grid[r, c]
 end
+
+(cd::CardinalDirection)(grid::Grid, cell::GridCell) =
+    cd(grid, cell.row, cell.col)
      
 
 function get_edge(gc::GridCell, direction::CardinalDirection)
@@ -257,11 +260,65 @@ Returns a vector of the indices of edges of the specified cell of
 """
 function perimeter_edge_indices(grid::Grid, row::Int, col::Int)
     indices = []
-    dims = size(grid)
-    if row == 1;       push!(indices, 1); end
-    if col == dims[2]; push!(indices, 2); end
-    if row == dims[1]; push!(indices, 3); end
-    if col == 1;       push!(indices, 4); end
+    (nrows, ncols) = size(grid)
+    if row == 1;      push!(indices, 1); end
+    if col == ncols;  push!(indices, 2); end
+    if row == nrows;  push!(indices, 3); end
+    if col == 1;      push!(indices, 4); end
     indices
 end
 
+"""
+   get_neighboring_edge(grid::Grid, row::Int, col::Int, direction::CardinalDirection) 
+
+Returns the `Edge` of the "neighboring cell" to the specified grid
+location.  If that location is out of bounds then `Edge(EdgeType(true,
+0), Straight())` is returned.  Otherwise, if there is no GridCell at
+the specified location yet, then `missing` is returned.
+"""
+function get_neighboring_edge(grid::Grid, row::Int, col::Int,
+                              direction::CardinalDirection)
+    (nrows, ncols) = size(grid)
+    neighbor_indices = direction(row, col)
+    if (neighbor_indices[1] < 1 ||
+        neighbor_indices[1] > nrows ||
+        neighbor_indices[2] < 1 ||
+        neighbor_indices[2] > ncols
+        )
+        return Edge(EdgeType(true, 0), Straight())
+    else
+        cell = grid[neighbor_indices...]
+        if cell isa GridCell
+            return get_edge(cell, opposite(direction))
+        end
+    end
+    return missing
+end
+
+
+"""
+    fit_piece(continuation, grid::Grid, row::Int, col::Int,
+                   piece::ImmutablePuzzlePiece)
+
+Attempts to fit `piece` into the specified location of `grid`.
+`continuation` is called for each rotation of `piece` that fits.
+"""
+function fit_piece(continuation, grid::Grid, row::Int, col::Int,
+                   piece::ImmutablePuzzlePiece)
+    # If the piece fits at the specified location in grid, call
+    # continuation with the rotation of the piece.
+    for rot in 0:3
+        for d in CARDINAL_DIRECTIONS
+            piece_edge = piece.edges[edge_index(rot + edge_index(d))]
+            neighbor_edge = get_neighboring_edge(grid, row, col, d)
+            if ismissing(neighbor_edge)
+                continue
+            end
+            if !edges_mate(piece_edge, neighbor_edge)
+                @goto no_fit
+            end
+        end
+        continuation(rot)
+        @label no_fit
+    end
+end
