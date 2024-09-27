@@ -1,6 +1,7 @@
 export edge_index
 export AbstractPuzzlePiece, perimeter_edge_indices
 export MutablePuzzlePiece, ImmutablePuzzlePiece
+export mating_piece_indices
 
 #=
 
@@ -35,6 +36,9 @@ AbstractPuzzlePiece is the abstract supertype for all types of jigsaw
 puzzle piece.
 """
 abstract type AbstractPuzzlePiece end
+
+edge(piece::AbstractPuzzlePiece, index::Int) =
+    piece.edges[edge_index(index)]
 
 
 """
@@ -89,9 +93,6 @@ struct MutablePuzzlePiece <: AbstractPuzzlePiece
         new(Vector{Union{Missing, Edge}}(missing, 4))
 end
 
-edge(piece::MutablePuzzlePiece, index::Int) =
-    piece.edges[edge_index(index)]
-
 
 #=
 
@@ -124,12 +125,66 @@ Constructs an `ImmutablePuzzlePiece` from a `MutablePuzzlePiece`.
 struct ImmutablePuzzlePiece <: AbstractPuzzlePiece
     edges
 
+    # Constructor for testing
+    function ImmutablePuzzlePiece(edges::Vector{Edge})
+        @assert length(edges) == 4
+        new(sort(edges))
+    end
+
     function ImmutablePuzzlePiece(from::MutablePuzzlePiece)
         @assert length(from.edges) == 4
         @assert all(e -> e isa Edge, from.edges)
         least = find_least_edge(from)
         new(tuple(map(i -> edge(from, edge_index(i)),
                       least : (least + 3))...))
+    end
+end
+
+function Base.isless(piece1::ImmutablePuzzlePiece,
+                     piece2::ImmutablePuzzlePiece)
+    function test_index(i)
+        if i > 4
+            return false
+        end
+        if isless(piece1.edges[i],
+                  piece2.edges[i])
+            true
+        elseif piece1.edges[i] == piece2.edges[i]
+            test_index(i + 1)
+        else
+            false
+        end
+    end
+    test_index(1)
+end
+
+
+"""
+    mating_piece_indices(continuation, piece1::ImmutablePuzzlePiece, piece1::ImmutablePuzzlePiece) 
+
+for each `Edge` of `piece1` that mates with an `Edge` of `piece2,
+Calls `continuation, on the indices into those two pieces of those
+mating edges.
+"""
+function mating_piece_indices(continuation,
+                              piece1::ImmutablePuzzlePiece,
+                              piece2::ImmutablePuzzlePiece)
+    for idx1 in 1:4
+        for idx2 in 1:4
+            if edges_mate(edge(piece1, idx1),
+                          edge(piece2, idx2))
+                # Check for borders:
+                if (edge(piece1, idx1 - 1).edge_type.isperimeter) &&
+                    !(edge(piece2, idx2 + 1).edge_type.isperimeter)
+                    continue
+                end
+                if (edge(piece1, idx1 + 1).edge_type.isperimeter) &&
+                    !(edge(piece2, idx2 - 1).edge_type.isperimeter)
+                    continue
+                end
+                continuation(idx1, idx2)
+            end
+        end
     end
 end
 
