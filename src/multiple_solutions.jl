@@ -148,7 +148,6 @@ struct MultipleSolutionPuzzle
                 end
             end
         end
-        terserep(puzzle)
         ## Make sure every cell has a puzzle piece with all four edges:
         for g in 1:length(puzzle.grids)
             grid = puzzle.grids[g]
