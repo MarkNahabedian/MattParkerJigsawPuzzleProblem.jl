@@ -12,5 +12,6 @@ include("grid.jl")
 include("multiple_solutions.jl")
 include("terse_representation.jl")
 include("grid_html.jl")
+include("solver.jl")
 
 end

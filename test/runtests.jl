@@ -183,6 +183,13 @@ end
     writing_html_file("single_grid_puzzle.html") do
         grid_to_html.(puzzle.grids)
     end
+    solver = Solver(size(puzzle),
+                    map(ImmutablePuzzlePiece,
+                        puzzle_pieces(puzzle)))
+    solve(solver)
+    writing_html_file("solved_single_grid_puzzle.html") do
+        grid_to_html.(solver.solved_grids)
+    end
 end
 
 #=
@@ -191,44 +198,5 @@ end
     check_perimeters(puzzle)
     check_that_edges_mate(puzzle)
 end
-=#
-
-
-#=
-
-using MattParkerJigsawPuzzleProblem
-
-begin
-    puzzle = MultipleSolutionPuzzle(4, 4, 1);
-
-    solver = Solver(size(puzzle),
-                    map(ImmutablePuzzlePiece,
-                        puzzle_pieces(puzzle)));
-    grid = solver.working_grids[1]
-    next_empty_index = Tuple(findfirst(x -> !isa(x, GridCell), grid))
-    nothing
-end
-
-grid = solver.working_grids[1]
-next_empty_index = Tuple(findfirst(x -> !isa(x, GridCell), grid))
-@assert next_empty_index == (2, 1)
-neighbor = N()(grid, next_empty_index...)
-
-candidates = solver.edge_index[
-    edge_index_key(opposite(get_edge(neighbor, opposite(N()))))]
-c = candidates[1]
-
-fit_piece(grid, next_empty_index..., c) do rot
-    println("*** $rot")
-end
-
-
-add_one_piece(solver, first(solver.working_grids))
-
-writing_html_file("after_add_one_piece.html") do
-    grid_to_html.(solver.working_grids)
-end
-
-
 =#
 
