@@ -128,7 +128,10 @@ struct MultipleSolutionPuzzle
                     ## Neighbor already has an Edge facing us, so make
                     ## sure it matches:
                     if !edges_mate(edge, neighbor_edge)
-                        println("Edges don't mate: $gridi $cell\n$edge\n$neighbor_edge\n")
+                        writing_html_file("edges_do_not_mate.html") do
+                            grids_to_html(puzzle.grids)
+                        end
+                        error("Edges don't mate: $gridi $cell\n$edge\n$neighbor_edge\n")
                     end
                 end
             end
