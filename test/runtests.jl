@@ -181,14 +181,14 @@ end
     check_perimeters(puzzle)
     check_that_edges_mate(puzzle)
     writing_html_file("single_grid_puzzle.html") do
-        grid_to_html.(puzzle.grids)
+        grids_to_html(puzzle.grids)
     end
     solver = Solver(size(puzzle),
                     map(ImmutablePuzzlePiece,
                         puzzle_pieces(puzzle)))
     solve(solver)
     writing_html_file("solved_single_grid_puzzle.html") do
-        grid_to_html.(solver.solved_grids)
+        grids_to_html(solver.solved_grids)
     end
 end
 
@@ -197,6 +197,43 @@ end
     puzzle = MultipleSolutionPuzzle(3, 5, 2)
     check_perimeters(puzzle)
     check_that_edges_mate(puzzle)
+    writing_html_file("two_grid_puzzle.html") do
+        grids_to_html(puzzle.grids)
+    end
+    solver = Solver(size(puzzle),
+                    map(ImmutablePuzzlePiece,
+                        puzzle_pieces(puzzle)))
+    solve(solver)
+    writing_html_file("solved_two_grid_puzzle.html") do
+        grids_to_html(solver.solved_grids)
+    end
+    @test length(solver.solved_grids) >= 2
 end
+=#
+
+#=
+
+using MattParkerJigsawPuzzleProblem
+using MattParkerJigsawPuzzleProblem: unused_pieces, find_next_empty
+
+begin
+    puzzle = MultipleSolutionPuzzle(4, 5, 1)
+    solver = Solver(size(puzzle),
+                    map(ImmutablePuzzlePiece,
+                        puzzle_pieces(puzzle)))
+    grid = solver.working_grids[1]
+    nothing
+end
+
+find_next_empty(grid)
+
+unused_pieces(grid, solver)
+
+add_one_piece(solver, grid)
+
+writing_html_file("working.html") do
+    grids_to_html(solver.working_grids)
+end
+
 =#
 
