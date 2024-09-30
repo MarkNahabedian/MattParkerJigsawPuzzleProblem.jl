@@ -82,6 +82,12 @@ whether it is a ball, socket, or straight.
 
 =#
 
+"""
+    BallOrSocket
+    Ball
+    Socket
+    Straight
+"""
 abstract type BallOrSocket end
 struct Ball <: BallOrSocket end
 struct Socket <: BallOrSocket end
