@@ -1,11 +1,9 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Grid · MattParkerJigsawPuzzleProblem.jl</title><meta name="title" content="Grid · MattParkerJigsawPuzzleProblem.jl"/><meta property="og:title" content="Grid · MattParkerJigsawPuzzleProblem.jl"/><meta property="twitter:title" content="Grid · MattParkerJigsawPuzzleProblem.jl"/><meta name="description" content="Documentation for MattParkerJigsawPuzzleProblem.jl."/><meta property="og:description" content="Documentation for MattParkerJigsawPuzzleProblem.jl."/><meta property="twitter:description" content="Documentation for MattParkerJigsawPuzzleProblem.jl."/><meta property="og:url" content="https://MarkNahabedian.github.io/MattParkerJigsawPuzzleProblem.jl/grid/"/><meta property="twitter:url" content="https://MarkNahabedian.github.io/MattParkerJigsawPuzzleProblem.jl/grid/"/><link rel="canonical" href="https://MarkNahabedian.github.io/MattParkerJigsawPuzzleProblem.jl/grid/"/><script data-outdated-warner src="../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../assets/documenter.js"></script><script src="../search_index.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="../">MattParkerJigsawPuzzleProblem.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../">Home</a></li><li><a class="tocitem" href="../edges/">Edges</a></li><li class="is-active"><a class="tocitem" href>Grid</a></li><li><a class="tocitem" href="../puzzle_pieces/">PuzzlePieces</a></li><li><a class="tocitem" href="../solved_puzzle/">SolvedPuzzle</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>Grid</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Grid</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/MarkNahabedian/MattParkerJigsawPuzzleProblem.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/MarkNahabedian/MattParkerJigsawPuzzleProblem.jl/blob/main/src/grid.jl" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><pre><code class="language-julia hljs">export CardinalDirection, N, E, S, W, CARDINAL_DIRECTIONS
-export opposite, next, previous
-export cardinal_directions_from
-export do_cardinal_directions
+export opposite
 export rotation, GridCell
 export get_edge, set_edge!, direction_for_edge
-export edge_direction, Grid, new_grid, get_neighboring_edge, fit_piece</code></pre><p>Puzzle pieces are assembled into a <em>grid</em> when the puzzle is being put together.  That grid has some number of <em>rows</em> and <em>columns</em>.  For a given row and column the grid has a <em>cell</em> which can be associated with the puzzle piece that belongs there.</p><p>The grid has three kinds of cells: <em>corner</em>, <em>edge</em>, and <em>middle</em>.  If a grid has <code>R</code> rows and <code>C</code> columns, it will have <code>R × C</code> cells. No matter the size of the grid, it will have <code>4</code> corner cells.  The number of edge cells is <code>2 × (R - 2) + 2 * (C - 2)</code>.  The remaining <code>(R - 2) × (C - 2)</code> cells are middle cells.</p><p>Each cell has four <em>neighbors</em>, one in each of the cardinal compass directions.</p><pre><code class="language-julia hljs">&quot;&quot;&quot;
+export Grid, new_grid, get_neighboring_edge, fit_piece</code></pre><p>Puzzle pieces are assembled into a <em>grid</em> when the puzzle is being put together.  That grid has some number of <em>rows</em> and <em>columns</em>.  For a given row and column the grid has a <em>cell</em> which can be associated with the puzzle piece that belongs there.</p><p>The grid has three kinds of cells: <em>corner</em>, <em>edge</em>, and <em>middle</em>.  If a grid has <code>R</code> rows and <code>C</code> columns, it will have <code>R × C</code> cells. No matter the size of the grid, it will have <code>4</code> corner cells.  The number of edge cells is <code>2 × (R - 2) + 2 * (C - 2)</code>.  The remaining <code>(R - 2) × (C - 2)</code> cells are middle cells.</p><p>Each cell has four <em>neighbors</em>, one in each of the cardinal compass directions.</p><pre><code class="language-julia hljs">&quot;&quot;&quot;
     GridCell(::AbstractPuzzlePiece, rotation::Int)
 
 A GridCell is the container for a puzzle piece in a puzzle grid.
@@ -19,6 +17,10 @@ struct GridCell
     GridCell(row, col, piece, rotation) =
         new(row, col, piece, mod(rotation, 4))
 end
+
+ImmutablePuzzlePiece(cell::GridCell) =
+    ImmutablePuzzlePiece(cell.puzzle_piece)
+
 
 const Grid = Array{Union{Missing, GridCell}, 2}
 
@@ -37,7 +39,10 @@ struct E &lt;: CardinalDirection end
 struct S &lt;: CardinalDirection end
 struct W &lt;: CardinalDirection end
 
-const CARDINAL_DIRECTIONS = (N(), E(), S(), W())</code></pre><p>There are various relationships among the <code>CardinalDirection</code>s: <em>opposite</em>, <em>next</em>, and <em>previous</em>.</p><pre><code class="language-julia hljs">&quot;&quot;&quot;
+const CARDINAL_DIRECTIONS = (N(), E(), S(), W())
+
+
+&quot;&quot;&quot;
     opposite(::CardinalDirection)::CardinalDirection
 
 Returns the opposite direction.  `N()` and `S()` are opposites.
@@ -48,54 +53,10 @@ opposite(::E) = W()
 opposite(::S) = N()
 opposite(::W) = E()
 
-&quot;&quot;&quot;
-    next(::CardinalDirection)::CardinalDirection
-
-Returns the next direction clockwise from the given direction.
-&quot;&quot;&quot;
-next(::N) = E()
-next(::E) = S()
-next(::S) = W()
-next(::W) = N()
-
-&quot;&quot;&quot;
-    previous(::CardinalDirection)::CardinalDirection
-
-Returns the previous direction, that which is counter-clockwise,
-from the given direction.
-&quot;&quot;&quot;
-previous(::N) = W()
-previous(::E) = N()
-previous(::S) = E()
-previous(::W) = S()
-
 edge_index(::N) = 1
 edge_index(::E) = 2
 edge_index(::S) = 3
-edge_index(::W) = 4</code></pre><p>Starting from a given <code>CardinalDirection</code>, we can identify a sequence of all of the <code>CardinalDirection</code>s in clockwise order.</p><pre><code class="language-julia hljs">&quot;&quot;&quot;
-    cardinal_directions_from(d::CardinalDirection)
-
-Returns the four caerdinal directions, starting with `d`, in `next`
-order.
-&quot;&quot;&quot;
-cardinal_directions_from(d::CardinalDirection) =
-    (d, next(d), next(next(d)), next(next(next(d))))</code></pre><p><code>do_cardinal_directions</code> allows us to easily iterate over the cardinal directions, either clockwise or in a raandom order.</p><pre><code class="language-julia hljs">&quot;&quot;&quot;
-    do_cardinal_directions(f; randomize=false)
-
-Applies the function `f` to each of the four `CardinalDirection`s.
-
-If `randomize` is true then the directions are considered in random
-order.
-&quot;&quot;&quot;
-function do_cardinal_directions(f; randomize=false)
-    directions = cardinal_directions_from(N())
-    if randomize
-        directions = Random.shuffle(collect(directions))
-    end
-    for d in directions
-        f(d)
-    end
-end</code></pre><p>Given the row and column indices of a grid cell, and a <code>CardinalDirection</code>, we can compute the coordinates of the neighboring cell in that direction.</p><p>Each instance of a <code>CardinalDirection</code> serves as an operator for going from one pair of row/coumn indices to the neighboring ones in that direction.  As these operators don&#39;t know the size of the grid, bounds checking must be by their callers.done</p><pre><code class="language-julia hljs">(::N)(row::Int, col::Int) = [row - 1, col]
+edge_index(::W) = 4</code></pre><p>Starting from a given <code>CardinalDirection</code>, we can identify a sequence of all of the <code>CardinalDirection</code>s in clockwise order.</p><p>Given the row and column indices of a grid cell, and a <code>CardinalDirection</code>, we can compute the coordinates of the neighboring cell in that direction.</p><p>Each instance of a <code>CardinalDirection</code> serves as an operator for going from one pair of row/coumn indices to the neighboring ones in that direction.  As these operators don&#39;t know the size of the grid, bounds checking must be done by their callers.</p><pre><code class="language-julia hljs">(::N)(row::Int, col::Int) = [row - 1, col]
 (::E)(row::Int, col::Int) = [row,     col + 1]
 (::S)(row::Int, col::Int) = [row + 1, col]
 (::W)(row::Int, col::Int) = [row,     col - 1]</code></pre><p>Which edge of a puzzle piece is facing a given <code>CardinalDirection</code> depends on the rotation of that piece.</p><p>The rotation of a puzzle piece is represented by one of the integers 0, 1, 2, or 3, also in clockwise order.</p><pre><code class="language-julia hljs">&quot;&quot;&quot;
@@ -104,11 +65,7 @@ end</code></pre><p>Given the row and column indices of a grid cell, and a <code>
 Normalizes the rotation of the placement of a puzzle piece to one of
 0, 1, 2, or 3.
 &quot;&quot;&quot;
-rotation(r::Int) = mod(r, 4)
-
-
-ImmutablePuzzlePiece(cell::GridCell) =
-    ImmutablePuzzlePiece(cell.puzzle_piece)</code></pre><p>Within a grid, a <code>GridCell</code> has a neighbor in each direction.</p><pre><code class="language-julia hljs">(cd::CardinalDirection)(gc::GridCell) = cd(gc.row, gc.col)
+rotation(r::Int) = mod(r, 4)</code></pre><p>Within a grid, a <code>GridCell</code> has a neighbor in each direction.</p><pre><code class="language-julia hljs">(cd::CardinalDirection)(gc::GridCell) = cd(gc.row, gc.col)
 
 function (cd::CardinalDirection)(grid::Grid, row::Int, col::Int)
     (r, c) = cd(row, col)
@@ -147,23 +104,6 @@ function direction_for_edge(cell::GridCell, edge::Edge)
         end
     end
     return missing
-end
-
-
-&quot;&quot;&quot;
-    edge_direction(rotation::Int, index::Int)::CardinalDirection
-
-For the specified `edge_index` and rotation of a puzzle piece, return
-the `CardinalDirection` that that edge faces.
-&quot;&quot;&quot;
-function edge_direction(piece_rotation::Int, index::Int)::CardinalDirection
-    @assert piece_rotation in 0:3
-    direction = cardinal_directions_from(N())[edge_index(index)]
-    while piece_rotation &gt; 0
-        direction = previous(direction)
-        piece_rotation -= 1
-    end
-    direction
 end
 
 
@@ -219,7 +159,10 @@ Attempts to fit `piece` into the specified location of `grid`.
 `continuation` is called for each rotation of `piece` that fits.
 &quot;&quot;&quot;
 function fit_piece(continuation, grid::Grid, row::Int, col::Int,
-                   piece::ImmutablePuzzlePiece)</code></pre><p>If the piece fits at the specified location in grid, call continuation with the rotation of the piece.</p><pre><code class="language-julia hljs">    for rot in 0:3
+                   piece::ImmutablePuzzlePiece)
+    # If the piece fits at the specified location in grid, call
+    # continuation with the rotation of the piece.
+    for rot in 0:3
         for d in CARDINAL_DIRECTIONS
             piece_edge = piece.edges[edge_index(rot + edge_index(d))]
             neighbor_edge = get_neighboring_edge(grid, row, col, d)
@@ -233,4 +176,4 @@ function fit_piece(continuation, grid::Grid, row::Int, col::Int,
         continuation(rot)
         @label no_fit
     end
-end</code></pre><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../edges/">« Edges</a><a class="docs-footer-nextpage" href="../puzzle_pieces/">PuzzlePieces »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.7.0 on <span class="colophon-date" title="Friday 27 September 2024 17:00">Friday 27 September 2024</span>. Using Julia version 1.10.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+end</code></pre><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../edges/">« Edges</a><a class="docs-footer-nextpage" href="../puzzle_pieces/">PuzzlePieces »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.7.0 on <span class="colophon-date" title="Monday 30 September 2024 17:38">Monday 30 September 2024</span>. Using Julia version 1.10.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

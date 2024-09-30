@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>- · MattParkerJigsawPuzzleProblem.jl</title><meta name="title" content="- · MattParkerJigsawPuzzleProblem.jl"/><meta property="og:title" content="- · MattParkerJigsawPuzzleProblem.jl"/><meta property="twitter:title" content="- · MattParkerJigsawPuzzleProblem.jl"/><meta name="description" content="Documentation for MattParkerJigsawPuzzleProblem.jl."/><meta property="og:description" content="Documentation for MattParkerJigsawPuzzleProblem.jl."/><meta property="twitter:description" content="Documentation for MattParkerJigsawPuzzleProblem.jl."/><meta property="og:url" content="https://MarkNahabedian.github.io/MattParkerJigsawPuzzleProblem.jl/solver/"/><meta property="twitter:url" content="https://MarkNahabedian.github.io/MattParkerJigsawPuzzleProblem.jl/solver/"/><link rel="canonical" href="https://MarkNahabedian.github.io/MattParkerJigsawPuzzleProblem.jl/solver/"/><script data-outdated-warner src="../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../assets/documenter.js"></script><script src="../search_index.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="../">MattParkerJigsawPuzzleProblem.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../">Home</a></li><li><a class="tocitem" href="../edges/">Edges</a></li><li><a class="tocitem" href="../grid/">Grid</a></li><li><a class="tocitem" href="../puzzle_pieces/">PuzzlePieces</a></li><li><a class="tocitem" href="../solved_puzzle/">SolvedPuzzle</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>-</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>-</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/MarkNahabedian/MattParkerJigsawPuzzleProblem.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/MarkNahabedian/MattParkerJigsawPuzzleProblem.jl/blob/main/src/solver.jl" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><pre><code class="language-julia hljs">export edge_index_key, make_edge_index
+export PuzzlePieceIncidenceGraph
+export find_incidence_graph_connections
+export Solver, add_one_piece, solve</code></pre><p>Given the pieces of a puzzle, we want to see how many solutions we can find: how many different ways those pieces can be assembled.</p><p>For the pieces of a puzzle, we can produce an index mapping from <a href="../#MattParkerJigsawPuzzleProblem.EdgeType"><code>EdgeType</code></a> and <a href="../#MattParkerJigsawPuzzleProblem.BallOrSocket"><code>BallOrSocket</code></a> to the puzzle peices having that <code>EdgeType</code> and <code>BallOrSocket</code> as an edge.</p><pre><code class="language-julia hljs">const EdgeIndexKey = Tuple{EdgeType, &lt;:BallOrSocket}
+
+Base.isless(k1::EdgeIndexKey, k2::EdgeIndexKey) =
+    isless(k1[1], k2[1]) ||
+    (k1[1] == k2[1] &amp;&amp; isless(k1[2], k2[2]))
+
+const EdgeIndex = SortedDict{EdgeIndexKey,
+                             Vector{ImmutablePuzzlePiece}}
+
+edge_index_key(edge::Edge) = (edge.edge_type, edge.bs)
+
+function make_edge_index(pieces::Vector{ImmutablePuzzlePiece})
+    edge_index = SortedDict{EdgeIndexKey,
+                            Vector{ImmutablePuzzlePiece}}()
+    for piece in pieces
+        for edge in piece.edges
+            key = edge_index_key(edge)
+            if !haskey(edge_index, key)
+                edge_index[key] = ImmutablePuzzlePiece[]
+            end
+            push!(edge_index[key], piece)
+        end
+    end
+    edge_index
+end</code></pre><p>To solve a puzzle, first we build an incidence graph where both axes are indexed by ImmutablePuzzlePiece.  That graph is represented by a square array.</p><pre><code class="language-julia hljs">struct PuzzlePieceIncidenceGraph
+    pieces::Vector{ImmutablePuzzlePiece}
+    incidence_graph
+
+    function PuzzlePieceIncidenceGraph(pieces)
+        l = length(pieces)
+        graph = new(pieces,
+                    Array{Any, 2}(missing, l, l))
+        for i in 1:l
+            for j in 1:l
+                graph.incidence_graph[i, j] = Tuple{Int64, Int64}[]
+            end
+        end
+        edge_index = make_edge_index(pieces)
+        for piece in pieces
+            for edge in piece.edges
+                if edge.bs isa Ball
+                    if !edge.edge_type.isperimeter
+                        for other in edge_index[(edge.edge_type,
+                                                 opposite(edge.bs))]
+                            if other == piece
+                                continue
+                            end
+                            mating_piece_indices(piece, other) do idx1, idx2
+                                push!(graph[piece, other],
+                                      (idx1, idx2))
+                            end
+                        end
+                    end
+                end
+            end
+        end
+        graph
+    end
+end
+
+function Base.getindex(g::PuzzlePieceIncidenceGraph,
+                       p1::ImmutablePuzzlePiece,
+                       p2::ImmutablePuzzlePiece)
+    r = findfirst(==(p1), g.pieces)
+    c = findfirst(==(p2), g.pieces)
+    g.incidence_graph[r, c]
+end
+
+function Base.setindex!(g::PuzzlePieceIncidenceGraph,
+                        new_value,
+                        p1::ImmutablePuzzlePiece,
+                       p2::ImmutablePuzzlePiece)
+    r = findfirst(==(p1), g.pieces)
+    c = findfirst(==(p2), g.pieces)
+    g.incidence_graph[r, c] = new_value
+end
+
+
+function find_incidence_graph_connections(graph::PuzzlePieceIncidenceGraph)
+    arcs = []
+    l = first(size(graph.incidence_graph))
+    for b in 1:l
+        for s in 1:l
+            for arc in graph.incidence_graph[b, s]
+                push!(arcs, (graph.pieces[b], arc[1],
+                             graph.pieces[s], arc[2]))
+            end
+        end
+    end
+    arcs
+end</code></pre><p>For each possible solution, we assemble the puzzle pieces into a grid. That grid is square, and of the larger dimension of the originally generated puzzle.</p><pre><code class="language-julia hljs">PuzzleSolutionGrid(size::Int) = Grid(missing, size, size)
+
+function PuzzleSolutionGrid(grid::Grid)
+    # Make a new grid that is a copy of grid.
+    l = first(size(grid))
+    new_grid = PuzzleSolutionGrid(l)
+    for r in 1:l
+        for c in 1:l
+            new_grid[r, c] = grid[r, c]
+        end
+    end
+    new_grid
+end
+
+
+struct Solver
+    size::Int
+    all_pieces::Vector{ImmutablePuzzlePiece}
+    edge_index::EdgeIndex
+    incidence_graph::PuzzlePieceIncidenceGraph
+    working_grids::Vector{Grid}
+    solved_grids::Vector{Grid}
+
+    function Solver(puzzle_size,
+                    pieces::Vector{ImmutablePuzzlePiece})
+        pieces = sort(pieces)
+        size = max(puzzle_size...)
+        edge_index = make_edge_index(pieces)
+        incidence_graph = PuzzlePieceIncidenceGraph(pieces)
+        solver = new(size, pieces, edge_index, incidence_graph,
+                     Vector{Grid}(),
+                     Vector{Grid}())</code></pre><p>Seed the first grid with a corner</p><pre><code class="language-julia hljs">        push!(solver.working_grids,
+              let
+                  grid = new_grid(solver)
+                  corner = pieces[1]
+                  @assert sum(isperimeter, corner.edges) &gt;= 2
+                  grid[1, 1] = GridCell(1, 1, corner, 0)
+                  grid
+              end)
+        solver
+    end
+end
+
+new_grid(solver::Solver) = Grid(missing, solver.size, solver.size)
+
+function finish_grid(solver::Solver, grid::Grid, issolved::Bool)
+    if issolved
+        push!(solver.solved_grids, grid)
+    end
+    deleteat!(solver.working_grids,
+              findall(g -&gt; g === grid, solver.working_grids))
+    solver
+end
+
+
+function find_next_empty(grid)
+    (nrows, ncols) = size(grid)
+    for r in 1:nrows
+        for c in 1:ncols
+            cell = grid[r, c]
+            if cell isa GridCell
+                # We can trust that the edges aren&#39;t missing because
+                # Solver only deals with completed
+                # ImmutablePuzzlePiees.
+                if get_edge(cell, E()).edge_type.isperimeter
+                    if get_edge(cell, S()).edge_type.isperimeter
+                        return nothing
+                    end
+                    continue
+                end
+            else
+                return (r, c)
+            end
+        end
+    end
+    nothing
+end
+
+
+&quot;&quot;&quot;
+    add_one_piece(solver::Solver, grid::Grid)
+
+Looks for a piece to fit into the grid.  If there is more than one
+mating piece then additional grids are created for them.
+&quot;&quot;&quot;
+function add_one_piece(solver::Solver, grid::Grid)
+    next_empty_index = find_next_empty(grid)
+    if next_empty_index === nothing
+        finish_grid(solver, grid, true)
+        return
+    end
+    next_empty_index = Tuple(next_empty_index)
+    # Find a neighboring puzzle piece:
+    (neighbor, candidates) =
+        let
+            neighbor = nothing
+            candidates = nothing
+            for d in CARDINAL_DIRECTIONS
+                neighbor = d(grid, next_empty_index...)
+                if neighbor isa GridCell
+                    candidates = solver.edge_index[
+                        edge_index_key(opposite(get_edge(neighbor, opposite(d))))]
+                    break
+                end
+            end
+            (neighbor, candidates)
+        end
+    @assert neighbor isa GridCell
+    @assert candidates != nothing
+    fits = 0
+    for c in candidates
+        # Have we already used c in the puzzle?
+        if c in filter(cell -&gt; (cell isa GridCell
+                                &amp;&amp; c == cell.puzzle_piece),
+                       grid)
+            continue
+        end
+        (row, col) = next_empty_index
+        fit_piece(grid, row, col, c) do rot
+            # candidate fits with the given rotation
+            fits += 1
+            # If we&#39;ve already put a piece in this location of this
+            # grid then add a new grid:
+            if !ismissing(grid[next_empty_index...])
+                grid = copy(grid)
+                push!(solver.working_grids, grid)
+            end
+            grid[row, col] = GridCell(row, col, c, rot)
+        end
+    end
+    if fits == 0
+        # We were not able too add a piece to this grid.  Don&#39;t do
+        # any more work on it.
+        finish_grid(solver, grid, false)
+    end
+    return
+end
+
+function solve(solver::Solver)
+    while !isempty(solver.working_grids)
+        add_one_piece(solver, first(solver.working_grids))
+    end
+end
+
+function unused_pieces(grid::Grid, solver::Solver)
+    pieces_in_grid = map(grid) do cell
+        if cell isa GridCell
+            cell.puzzle_piece
+        end
+    end
+    unused = []
+    for piece in solver.all_pieces
+        if !(piece in pieces_in_grid)
+            push!(unused, piece)
+        end
+    end
+    unused
+end</code></pre><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.7.0 on <span class="colophon-date" title="Monday 30 September 2024 17:38">Monday 30 September 2024</span>. Using Julia version 1.10.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

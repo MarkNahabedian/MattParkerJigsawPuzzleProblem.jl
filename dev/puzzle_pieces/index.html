@@ -78,7 +78,10 @@ end
 Constructs an `ImmutablePuzzlePiece` from a `MutablePuzzlePiece`.
 &quot;&quot;&quot;
 struct ImmutablePuzzlePiece &lt;: AbstractPuzzlePiece
-    edges</code></pre><p>Constructor for testing</p><pre><code class="language-julia hljs">    function ImmutablePuzzlePiece(edges::Vector{Edge})
+    edges
+
+    # Constructor for testing
+    function ImmutablePuzzlePiece(edges::Vector{Edge})
         @assert length(edges) == 4
         new(sort(edges))
     end
@@ -114,8 +117,8 @@ end
 &quot;&quot;&quot;
     mating_piece_indices(continuation, piece1::ImmutablePuzzlePiece, piece1::ImmutablePuzzlePiece)
 
-for each `Edge` of `piece1` that mates with an `Edge` of `piece2,
-Calls `continuation, on the indices into those two pieces of those
+for each `Edge` of `piece1` that mates with an `Edge` of `piece2`,
+Calls `continuation`, on the indices into those two pieces of those
 mating edges.
 &quot;&quot;&quot;
 function mating_piece_indices(continuation,
@@ -124,7 +127,9 @@ function mating_piece_indices(continuation,
     for idx1 in 1:4
         for idx2 in 1:4
             if edges_mate(edge(piece1, idx1),
-                          edge(piece2, idx2))</code></pre><p>Check for borders:</p><pre><code class="language-julia hljs">                if (edge(piece1, idx1 - 1).edge_type.isperimeter) &amp;&amp;
+                          edge(piece2, idx2))
+                # Check for borders:
+                if (edge(piece1, idx1 - 1).edge_type.isperimeter) &amp;&amp;
                     !(edge(piece2, idx2 + 1).edge_type.isperimeter)
                     continue
                 end
@@ -136,4 +141,4 @@ function mating_piece_indices(continuation,
             end
         end
     end
-end</code></pre><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../grid/">« Grid</a><a class="docs-footer-nextpage" href="../solved_puzzle/">SolvedPuzzle »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.7.0 on <span class="colophon-date" title="Friday 27 September 2024 17:00">Friday 27 September 2024</span>. Using Julia version 1.10.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+end</code></pre><hr/><p><em>This page was generated using <a href="https://github.com/fredrikekre/Literate.jl">Literate.jl</a>.</em></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../grid/">« Grid</a><a class="docs-footer-nextpage" href="../solved_puzzle/">SolvedPuzzle »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.7.0 on <span class="colophon-date" title="Monday 30 September 2024 17:38">Monday 30 September 2024</span>. Using Julia version 1.10.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
