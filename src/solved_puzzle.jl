@@ -10,7 +10,7 @@ In the solution of a puzzle, each piece has a unique location (row and
 column) and one of four rotations.
 
 Each edge of a piece, in its solved orientation, can be identified by
-a cardinal compass direction: `n`, `e`, `s`, or `w`.
+a cardinal compass direction: `N`, `E`, `S`, or `W`.
 
 =#
 
@@ -72,7 +72,7 @@ It is conventient for SolvedPuzzle to serve as an indexible surrogate
 for its own grid of puzzle pieces.  We need `getindex` but not
 `setindex!`.
 
-For out ofbounds indecies we just return `nothing` rather than
+For out of bounds indecies we just return `nothing` rather than
 throwing an error.
 
 =#
@@ -147,7 +147,7 @@ The `SolvedPuzzle` is returned.
 """
 function assign_unique_unassigned_edges(sp::SolvedPuzzle)::SolvedPuzzle
     (rows, cols) = size(sp)
-    # It's ok to create too many EdgeTypes, they're cheap:
+    ## It's ok to create too many EdgeTypes, they're cheap:
     edge_types = random_edge_types(4 * rows * cols / 2, false)
     for r in 1:rows
         for c in 1:cols

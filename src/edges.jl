@@ -127,13 +127,10 @@ function Base.isless(a::EdgeType, b::EdgeType)::Bool
     a.uid < b.uid
 end
 
-function Base.isless(a::BallOrSocket, b::BallOrSocket)
-    false
-end
-
-function Base.isless(::Ball, ::Socket)
-    true
-end
+Base.isless(::BallOrSocket, ::BallOrSocket) = false
+Base.isless(::Ball, ::Socket) = true
+Base.isless(::Ball, ::Straight) = true
+Base.isless(::Socket, ::Straight) = true
 
 function Base.isless(a::Edge, b::Edge)
     (isless(a.edge_type, b.edge_type) ||
@@ -156,7 +153,7 @@ Two `Edge`s mate if they have the same `EdgeType` and their `bs`s are
 opposites.
 """
 function edges_mate(e1::Edge, e2::Edge)::Bool
-    # For perimeter edges the EdgeType doesn't matter:
+    ## For perimeter edges the EdgeType doesn't matter:
     (e1.bs == e2.bs == Straight()) ||
         ((e1.edge_type == e2.edge_type) &&
         (opposite(e1.bs) == e2.bs))

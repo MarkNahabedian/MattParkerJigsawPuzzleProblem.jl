@@ -6,6 +6,13 @@ export Solver, add_one_piece, solve
 
 #=
 
+Given the pieces of a puzzle, we want to see how many solutions we can
+find: how many different ways those pieces can be assembled.
+
+=#
+
+#=
+
 For the pieces of a puzzle, we can produce an index mapping from
 [`EdgeType`](@ref) and [`BallOrSocket`](@ref) to the puzzle peices
 having that `EdgeType` and `BallOrSocket` as an edge.

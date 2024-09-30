@@ -1,10 +1,8 @@
 export CardinalDirection, N, E, S, W, CARDINAL_DIRECTIONS
-export opposite, next, previous
-export cardinal_directions_from
-export do_cardinal_directions
+export opposite
 export rotation, GridCell
 export get_edge, set_edge!, direction_for_edge
-export edge_direction, Grid, new_grid, get_neighboring_edge, fit_piece
+export Grid, new_grid, get_neighboring_edge, fit_piece
 
 #=
 
@@ -39,6 +37,10 @@ struct GridCell
         new(row, col, piece, mod(rotation, 4))
 end
 
+ImmutablePuzzlePiece(cell::GridCell) =
+    ImmutablePuzzlePiece(cell.puzzle_piece)
+
+
 const Grid = Array{Union{Missing, GridCell}, 2}
 
 """
@@ -58,12 +60,6 @@ struct W <: CardinalDirection end
 
 const CARDINAL_DIRECTIONS = (N(), E(), S(), W())
 
-#=
-
-There are various relationships among the `CardinalDirection`s:
-*opposite*, *next*, and *previous*.
-
-=#
 
 """
     opposite(::CardinalDirection)::CardinalDirection
@@ -75,27 +71,6 @@ opposite(::N) = S()
 opposite(::E) = W()
 opposite(::S) = N()
 opposite(::W) = E()
-
-"""
-    next(::CardinalDirection)::CardinalDirection
-
-Returns the next direction clockwise from the given direction.
-"""
-next(::N) = E()
-next(::E) = S()
-next(::S) = W()
-next(::W) = N()
-
-"""
-    previous(::CardinalDirection)::CardinalDirection
-
-Returns the previous direction, that which is counter-clockwise,
-from the given direction.
-"""
-previous(::N) = W()
-previous(::E) = N()
-previous(::S) = E()
-previous(::W) = S()
 
 edge_index(::N) = 1
 edge_index(::E) = 2
@@ -111,42 +86,6 @@ of all of the `CardinalDirection`s in clockwise order.
 =#
 
 
-"""
-    cardinal_directions_from(d::CardinalDirection)
-
-Returns the four caerdinal directions, starting with `d`, in `next`
-order.
-"""
-cardinal_directions_from(d::CardinalDirection) =
-    (d, next(d), next(next(d)), next(next(next(d))))
-
-
-#=
-
-`do_cardinal_directions` allows us to easily iterate over the cardinal
-directions, either clockwise or in a raandom order.
-
-=#
-
-"""
-    do_cardinal_directions(f; randomize=false)
-
-Applies the function `f` to each of the four `CardinalDirection`s.
-
-If `randomize` is true then the directions are considered in random
-order.
-"""
-function do_cardinal_directions(f; randomize=false)
-    directions = cardinal_directions_from(N())
-    if randomize
-        directions = Random.shuffle(collect(directions))
-    end
-    for d in directions
-        f(d)
-    end
-end
-
-
 #=
 
 Given the row and column indices of a grid cell, and a
@@ -156,7 +95,7 @@ cell in that direction.
 Each instance of a `CardinalDirection` serves as an operator for going
 from one pair of row/coumn indices to the neighboring ones in that
 direction.  As these operators don't know the size of the grid, bounds
-checking must be by their callers.done 
+checking must be done by their callers.
 
 =#
 
@@ -183,9 +122,6 @@ Normalizes the rotation of the placement of a puzzle piece to one of
 """
 rotation(r::Int) = mod(r, 4)
 
-
-ImmutablePuzzlePiece(cell::GridCell) =
-    ImmutablePuzzlePiece(cell.puzzle_piece)
 
 #=
 
@@ -232,23 +168,6 @@ function direction_for_edge(cell::GridCell, edge::Edge)
         end
     end
     return missing
-end
-
-
-"""
-    edge_direction(rotation::Int, index::Int)::CardinalDirection
-
-For the specified `edge_index` and rotation of a puzzle piece, return
-the `CardinalDirection` that that edge faces.
-"""
-function edge_direction(piece_rotation::Int, index::Int)::CardinalDirection
-    @assert piece_rotation in 0:3
-    direction = cardinal_directions_from(N())[edge_index(index)]
-    while piece_rotation > 0
-        direction = previous(direction)
-        piece_rotation -= 1
-    end
-    direction
 end
 
 
@@ -305,8 +224,8 @@ Attempts to fit `piece` into the specified location of `grid`.
 """
 function fit_piece(continuation, grid::Grid, row::Int, col::Int,
                    piece::ImmutablePuzzlePiece)
-    # If the piece fits at the specified location in grid, call
-    # continuation with the rotation of the piece.
+    ## If the piece fits at the specified location in grid, call
+    ## continuation with the rotation of the piece.
     for rot in 0:3
         for d in CARDINAL_DIRECTIONS
             piece_edge = piece.edges[edge_index(rot + edge_index(d))]

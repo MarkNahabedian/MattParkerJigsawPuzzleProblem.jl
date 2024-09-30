@@ -125,7 +125,7 @@ Constructs an `ImmutablePuzzlePiece` from a `MutablePuzzlePiece`.
 struct ImmutablePuzzlePiece <: AbstractPuzzlePiece
     edges
 
-    # Constructor for testing
+    ## Constructor for testing
     function ImmutablePuzzlePiece(edges::Vector{Edge})
         @assert length(edges) == 4
         new(sort(edges))
@@ -162,8 +162,8 @@ end
 """
     mating_piece_indices(continuation, piece1::ImmutablePuzzlePiece, piece1::ImmutablePuzzlePiece) 
 
-for each `Edge` of `piece1` that mates with an `Edge` of `piece2,
-Calls `continuation, on the indices into those two pieces of those
+for each `Edge` of `piece1` that mates with an `Edge` of `piece2`,
+Calls `continuation`, on the indices into those two pieces of those
 mating edges.
 """
 function mating_piece_indices(continuation,
@@ -173,7 +173,7 @@ function mating_piece_indices(continuation,
         for idx2 in 1:4
             if edges_mate(edge(piece1, idx1),
                           edge(piece2, idx2))
-                # Check for borders:
+                ## Check for borders:
                 if (edge(piece1, idx1 - 1).edge_type.isperimeter) &&
                     !(edge(piece2, idx2 + 1).edge_type.isperimeter)
                     continue

@@ -13,21 +13,9 @@ using Test
 end
 
 @testset "Cardinal directions" begin
-    do_cardinal_directions() do dir
+    for dir in CARDINAL_DIRECTIONS
         @test opposite(opposite(dir)) == dir
-        @test next(previous(dir)) == dir
-        @test previous(next(dir)) == dir
-        @test next(dir) == opposite(previous(dir))
-        @test next(dir) == previous(opposite(dir))
-        @test previous(dir) == opposite(next(dir))
-        @test previous(dir) == next(opposite(dir))
     end
-    @test cardinal_directions_from(N()) == (N(), E(), S(), W())
-    @test cardinal_directions_from(W()) == (W(), N(), E(), S())
-    @test edge_direction(0, 1) == N()
-    @test edge_direction(0, 5) == N()
-    @test edge_direction(0, 2) == E()
-    @test edge_direction(1, 1) == W()
     @test N()(2, 2) == [1, 2]
     @test E()(2, 2) == [2, 3]
     @test S()(2, 2) == [3, 2]
