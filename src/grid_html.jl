@@ -1,7 +1,8 @@
+using Base.Iterators
 import XML
 using XML: Element
 
-export writing_html_file, html_wrapper, grid_to_html
+export writing_html_file, html_wrapper, grids_to_html, grid_to_html
 
 #=
 
@@ -19,7 +20,10 @@ GRID_STYESHEET = """
     border: solid yellow;
 }
 .GridCell {
-    display: block;
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
     margin: 0;
     padding: 2;
     border: solid yellow;
@@ -28,26 +32,36 @@ GRID_STYESHEET = """
     font-family: sans-serif;
 }
 .Edge.N {
-    display: block;
-    vertical-align: top;
+    display: in-line;
+    grid-row: 1;
+    grid-column: 2:
     text-align: center;
 }
 .Edge.E {
-    display: inline-block;
-    margin-left: 1em;
-    vertical-align: center;
+    display: in-line;
+    grid-row: 2;
+    grid-column: 3:
     text-align: end;
 }
 .Edge.S {
-    display: block;
-    vertical-align: bottom;
+    display: in-line;
+    grid-row: 3;
+    grid-column: 2:
     text-align: center;
 }
 .Edge.W {
-    display: inline-block;
-    margin-right: 1em;
-    vertical-align: center;
+    display: in-line;
+    grid-row: 2;
+    grid-column: 1:
     text-align: start;
+}
+.piece_number {
+    display: in-line;
+    grid-row: 2;
+    grid-column: 2:
+    margin: 3em;
+    font-weight: bold;
+    text-align: center;
 }
 """
 
@@ -69,8 +83,35 @@ function html_wrapper(body_elements)
     )
 end
 
+function grids_to_html(grids::Vector{Grid})
+    all_pieces = Set()
+    for grid in grids
+        (nrows, ncols) = size(grid)
+        for row in 1:nrows
+            for col in 1:ncols
+                cell = grid[row, col]
+                if cell isa GridCell
+                    push!(all_pieces, cell.puzzle_piece)
+                end
+            end
+        end
+    end
+    piece_numbers = Dict{AbstractPuzzlePiece, Int}()
+    for (i, p) in enumerate(all_pieces)
+        piece_numbers[p] = i
+    end
+    map(g -> grid_to_html(g, piece_numbers),
+        grids)
+end
 
-function grid_to_html(grid::Grid)
+function grid_to_html(grid::Grid, piece_numbers=nothing)
+    function piece_number(cell::GridCell)
+        if piece_numbers isa Dict
+            string(piece_numbers[cell.puzzle_piece])
+        else
+            ""
+        end
+    end
     (nrows, ncols) = size(grid)
     Element(
         "div",
@@ -96,6 +137,13 @@ function grid_to_html(grid::Grid)
                                                   "div",
                                                   terserep(edge);
                                                   class="Edge $(string(typeof(d)))"))
+                                        if d isa W
+                                            push!(edges,
+                                                  Element(
+                                                      "div",
+                                                      piece_number(cell);
+                                                      class="piece_number"))
+                                        end
                                     end
                                     edges
                                 else
