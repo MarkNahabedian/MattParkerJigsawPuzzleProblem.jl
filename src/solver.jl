@@ -270,6 +270,11 @@ function add_one_piece(solver::Solver, grid::Grid)
     return
 end
 
+"""
+    solve(solver::Solver)
+
+Run the solver to find solutions to the jigsaw puzzle.
+"""
 function solve(solver::Solver)
     while !isempty(solver.working_grids)
         add_one_piece(solver, first(solver.working_grids))
