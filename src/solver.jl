@@ -14,7 +14,7 @@ find: how many different ways those pieces can be assembled.
 #=
 
 For the pieces of a puzzle, we can produce an index mapping from
-[`EdgeType`](@ref) and [`BallOrSocket`](@ref) to the puzzle peices
+[`EdgeType`](@ref) and [`BallOrSocket`](@ref) to the puzzle pieces
 having that `EdgeType` and `BallOrSocket` as an edge.
 
 =#
