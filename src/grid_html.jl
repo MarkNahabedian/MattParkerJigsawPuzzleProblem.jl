@@ -6,8 +6,8 @@ export writing_html_file, html_wrapper, grids_to_html, grid_to_html
 
 #=
 
-We need an easy to understand representation of a puzze.  HEre we
-generate an HTML table from a puzzle grid.
+We need an easy to understand representation of a puzze.  Here we
+generate an HTML grid from a puzzle grid.
 
 =#
 
@@ -65,6 +65,13 @@ GRID_STYESHEET = """
 }
 """
 
+"""
+    writing_html_file(body, filename)
+
+Write an HTML file to `filename`.
+
+`body` is a vector of elements to be included in the HTML document.
+"""
 function writing_html_file(body, filename)
     ## body should return a vector of HTML Elements.
     XML.write(filename,
@@ -83,6 +90,12 @@ function html_wrapper(body_elements)
     )
 end
 
+
+"""
+    grids_to_html(grids::Vector{Grid})
+
+Generates HTML elements for the grids.
+"""
 function grids_to_html(grids::Vector{Grid})
     all_pieces = Set()
     for grid in grids
@@ -104,6 +117,15 @@ function grids_to_html(grids::Vector{Grid})
         grids)
 end
 
+
+"""
+    grid_to_html(grid::Grid, piece_numbers=nothing)
+
+Generates HTML representing a tabular view of `grid`.
+
+If `piece_numbers` is specified it is a Dict mapping from a puzzle
+piece to s small integer id to be printed in the center of the piece.
+"""
 function grid_to_html(grid::Grid, piece_numbers=nothing)
     function piece_number(cell::GridCell)
         if piece_numbers isa Dict
