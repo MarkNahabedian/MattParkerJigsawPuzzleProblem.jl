@@ -115,8 +115,10 @@ struct MultipleSolutionPuzzle
             all_pieces = Set([corners..., edges..., middle...])
             for grid in puzzle.grids
                 grid_pieces = Set()
-                for cell in grid
-                    push!(grid_pieces, grid[r, c].puzzle_piece)
+                for r in 1:number_of_rows
+                    for c in 1:number_of_columns
+                        push!(grid_pieces, grid[r, c].puzzle_piece)
+                    end
                 end
                 @assert all_pieces == grid_pieces
             end
