@@ -10,12 +10,24 @@ orientations, in each grid.
 
 =#
 
+"""
+    MultipleSolutionPuzzle(number_of_rows, number_of_columns, number_of_grids)
+
+MultipleSolutionPuzzle is used to generate jigsaw puzzles with the
+specified numnber of rows and colukmns.  It will attempy to generate
+`number_of_grids` puzzles with the same pieces.  The pieces that are
+generated can be assembled least that number of of different ways.
+One must run the solver to see how many ways the pieces can actually
+be assembled.
+
+Use [`puzzle_pieces`](@ref) to get the pieces.
+"""
 struct MultipleSolutionPuzzle
     grids
 
-    ## Iy might be simpler to populate the first grid with Pieces that
-    ## have no edges yet, add the perimeter edges and then permute
-    ## them for the other grids.
+    ## It's simpler to populate the first grid with Pieces that have
+    ## no edges yet, add the perimeter edges and then permute them for
+    ## the other grids.
     function MultipleSolutionPuzzle(number_of_rows, number_of_columns,
                                     number_of_grids)
         puzzle = new(map(_ -> new_grid(number_of_rows, number_of_columns),
@@ -56,8 +68,11 @@ struct MultipleSolutionPuzzle
                 end
             end
         end
-        ## Populate the remaining grids with permutations of the
-        ## pieces from grid1:
+        ## Once we permute the corner or edge pieces of a puzzle for
+        ## other grids, they won't end up in the same locations so
+        ## might need to be rotated of thealternate locations.
+        ## Compute the rotation for the cell such that the perimeter
+        ## edges of the piece match those of the cell.
         function cell_rotation(row, col, piece::MutablePuzzlePiece)
             count_perimeters(pmtrs) = sum(p -> p == true, pmtrs)
             cell_perimeters = perimeters(puzzle, row, col)
@@ -73,6 +88,8 @@ struct MultipleSolutionPuzzle
             end
             @assert false "Can't determine piece rotation."
         end
+        ## Populate the remaining grids with permutations of the
+        ## pieces from grid1:
         for i in 2:number_of_grids
             grid = puzzle.grids[i]
             permuted_corners = Random.shuffle(corners)
@@ -98,10 +115,8 @@ struct MultipleSolutionPuzzle
             all_pieces = Set([corners..., edges..., middle...])
             for grid in puzzle.grids
                 grid_pieces = Set()
-                for r in 1:number_of_rows
-                    for c in 1:number_of_columns
-                        push!(grid_pieces, grid[r, c].puzzle_piece)
-                    end
+                for cell in grid
+                    push!(grid_pieces, grid[r, c].puzzle_piece)
                 end
                 @assert all_pieces == grid_pieces
             end
@@ -119,7 +134,7 @@ struct MultipleSolutionPuzzle
                 neighbor = direction(grid, cell)
                 @assert isa(neighbor, GridCell)
                 neighbor_edge = get_edge(neighbor, opposite(direction))
-                if ismissing(neighbor_edge)
+                if !isa(neighbor_edge, Edge)
                     neighbor_edge = opposite(edge)
                     set_edge!(neighbor, opposite(direction),
                               neighbor_edge)
