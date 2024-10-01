@@ -40,7 +40,9 @@ makedocs(;
         "Edges" => "edges.md",
         "Grid" => "grid.md",
         "PuzzlePieces" => "puzzle_pieces.md",
-        "SolvedPuzzle" => "solved_puzzle.md"
+        "Constructing a Puzzle" => "multiple_solutions.md",
+        "Solving" => "solver.md",
+        "HTML Grid" => "grid_html.md"
     ],
 )
 
