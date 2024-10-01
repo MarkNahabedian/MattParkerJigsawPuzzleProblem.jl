@@ -4,9 +4,12 @@
 /Manifest.toml
 /docs/Manifest.toml
 /docs/build/
-
 docs/src/MattParkerJigsawPuzzleProblem.md
 docs/src/edges.md
 docs/src/grid.md
+docs/src/grid_html.md
+docs/src/multiple_solutions.md
 docs/src/puzzle_pieces.md
 docs/src/solved_puzzle.md
+docs/src/solver.md
+docs/src/terse_representation.md
